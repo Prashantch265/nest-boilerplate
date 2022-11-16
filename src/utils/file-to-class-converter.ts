@@ -1,14 +1,14 @@
 /*
- * @Author: prashant.chaudhary 
- * @Date: 2022-10-20 11:46:21 
- * @Last Modified by:   prashant.chaudhary 
- * @Last Modified time: 2022-10-20 11:46:21 
+ * @Author: prashant.chaudhary
+ * @Date: 2022-10-20 11:46:21
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-11-16 15:57:51
  */
 
 import * as path from 'path';
 import * as fs from 'fs';
 
-const readFilesFromFolder = (
+export const readFilesFromFolder = (
   directory: string,
   filterFile: string[],
   allFiles?: string[],
@@ -70,5 +70,3 @@ export function importClassesFromDirectories() {
   return loadFileClasses(dirs, []);
   // return modules;
 }
-
-export { readFilesFromFolder as readFile };

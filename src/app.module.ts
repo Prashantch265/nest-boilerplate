@@ -1,18 +1,22 @@
 /*
- * @Author: prashant.chaudhary 
- * @Date: 2022-10-20 10:53:47 
+ * @Author: prashant.chaudhary
+ * @Date: 2022-10-20 10:53:47
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-10-20 11:53:13
+ * @Last Modified time: 2022-11-16 15:37:18
  */
 
 import { Module, Logger, CacheModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { mongooseConnection } from './config/db-connection.configs';
+import {
+  mongooseConnection,
+  pgConnection,
+} from './config/db-connection.configs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigurationModule } from './config/configuration.module';
 import { importClassesFromDirectories } from './utils/file-to-class-converter';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 @Module({
   imports: [
@@ -24,6 +28,19 @@ import { importClassesFromDirectories } from './utils/file-to-class-converter';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) =>
         mongooseConnection(configService),
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<TypeOrmModuleOptions> => {
+        const connection = pgConnection(configService);
+        return {
+          ...connection,
+          retryAttempts: 5,
+        };
+      },
     }),
     ...importClassesFromDirectories(),
   ],

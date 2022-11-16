@@ -1,8 +1,8 @@
 /*
- * @Author: prashant.chaudhary 
- * @Date: 2022-10-20 10:58:57 
- * @Last Modified by:   prashant.chaudhary 
- * @Last Modified time: 2022-10-20 10:58:57 
+ * @Author: prashant.chaudhary
+ * @Date: 2022-10-20 10:58:57
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-11-16 12:22:50
  */
 
 import { WinstonModule } from 'nest-winston';
@@ -23,21 +23,22 @@ const enumerateErrorFormat = winston.format((info) => {
   return info;
 });
 
+const enableLogger = () => {
+  if (process.env.NODE_ENV === 'development' || 'local') return true;
+};
 /*
  * Log Level
  * error: 0, warn: 1, info: 2, http: 3, verbose: 4, debug: 5, silly: 6
  */
 const loggerService = () =>
   WinstonModule.createLogger({
-    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+    level: enableLogger ? 'debug' : 'info',
     format: winston.format.combine(
       enumerateErrorFormat(),
       winston.format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss',
       }),
-      process.env.NODE_ENV === 'development'
-        ? winston.format.colorize()
-        : winston.format.uncolorize(),
+      enableLogger ? winston.format.colorize() : winston.format.uncolorize(),
       winston.format.splat(),
       winston.format.printf(
         ({ timestamp, level, message }) => `${timestamp} ${level}: ${message}`,

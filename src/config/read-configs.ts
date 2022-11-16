@@ -1,15 +1,19 @@
 /*
- * @Author: prashant.chaudhary 
- * @Date: 2022-10-20 11:47:53 
- * @Last Modified by:   prashant.chaudhary 
- * @Last Modified time: 2022-10-20 11:47:53 
+ * @Author: prashant.chaudhary
+ * @Date: 2022-10-20 11:47:53
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-11-16 12:47:36
  */
 
 import { readFileSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
 
-const YAML_CONFIG_FILENAME = 'config.yaml';
+let YAML_CONFIG_FILENAME;
+
+if (process.env.NODE_ENV) {
+  YAML_CONFIG_FILENAME = `${process.env.NODE_ENV}.config.yaml`;
+}
 
 export default function readConfigurations() {
   return yaml.load(

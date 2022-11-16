@@ -1,8 +1,8 @@
 /*
- * @Author: prashant.chaudhary 
- * @Date: 2022-10-20 10:53:22 
+ * @Author: prashant.chaudhary
+ * @Date: 2022-10-20 10:53:22
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-10-20 11:54:33
+ * @Last Modified time: 2022-11-16 12:53:57
  */
 
 import { ConfigService } from '@nestjs/config';
@@ -11,6 +11,7 @@ import * as morgan from 'morgan';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './pipe/validation.pipe';
 import { loggerService, Stream } from './utils/logger';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -19,10 +20,21 @@ async function bootstrap() {
   app.useLogger(loggerService());
   app.useGlobalPipes(new CustomValidationPipe({ transform: true }));
 
-  if (process.env.NODE_ENV && process.env.NODE_ENV === 'development')
+  if (process.env.NODE_ENV === 'development' || 'local')
     app.use(morgan('dev', { stream: new Stream(loggerService()) }));
   else app.use(morgan('combined', { stream: new Stream(loggerService()) }));
-  
+
+  const config = new DocumentBuilder()
+    .setTitle('nest-boilerplate')
+    .setDescription('Boilerplate API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup('api', app, document);
+
   await app.listen(port);
 }
 bootstrap();
