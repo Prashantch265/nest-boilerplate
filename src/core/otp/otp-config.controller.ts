@@ -6,16 +6,16 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
+import { ResponseMessage } from 'src/decorators/response.decorator';
 import OtpConfigService from './otp-config.service';
 
 @Controller('otp-config')
 export default class OtpConfigController {
   constructor(private readonly otpConfigService: OtpConfigService) {}
 
+  @ResponseMessage('fetch', 'OTP Configurations')
   @Get()
   async getAllOtpConfig() {
-    const resData: any = await this.otpConfigService.getAllOtpConfig();
-    return resData;
-    // return successResponse(200, resData, 'fetched', 'otp-config');
+    return await this.otpConfigService.getAllOtpConfig();
   }
 }

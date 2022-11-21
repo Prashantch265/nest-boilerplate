@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:47
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 15:37:18
+ * @Last Modified time: 2022-11-21 18:53:44
  */
 
 import { Module, Logger, CacheModule } from '@nestjs/common';
@@ -17,6 +17,8 @@ import { AppService } from './app.service';
 import { ConfigurationModule } from './config/configuration.module';
 import { importClassesFromDirectories } from './utils/file-to-class-converter';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { HttpExceptionFilter } from './filters/exception.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -45,6 +47,13 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
     ...importClassesFromDirectories(),
   ],
   controllers: [AppController],
-  providers: [AppService, Logger],
+  providers: [
+    AppService,
+    Logger,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
