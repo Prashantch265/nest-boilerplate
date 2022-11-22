@@ -2,12 +2,12 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:58:57
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 12:22:50
+ * @Last Modified time: 2022-11-22 22:59:20
  */
 
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-import * as winstonDaily from 'winston-daily-rotate-file';
+import winstonDaily from 'winston-daily-rotate-file';
 import { existsSync, mkdirSync } from 'fs';
 import { LoggerService } from '@nestjs/common';
 

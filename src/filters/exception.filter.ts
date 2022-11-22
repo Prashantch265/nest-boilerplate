@@ -1,3 +1,10 @@
+/*
+ * @Author: prashant.chaudhary
+ * @Date: 2022-11-22 22:28:27
+ * @Last Modified by:   prashant.chaudhary
+ * @Last Modified time: 2022-11-22 22:28:27
+ */
+
 import {
   ExceptionFilter,
   Catch,
@@ -11,7 +18,7 @@ import {
   UnauthorizedException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import FileNotFoundException from 'src/exceptions/file-not-found.exception';
 import ValidationException from 'src/exceptions/validation.exception';
 import { errorResponse } from 'src/utils';
@@ -32,20 +39,9 @@ import { TokenExpiredError } from 'jsonwebtoken';
 export class HttpExceptionFilter implements ExceptionFilter {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
-  async catch(
-    exception: [
-      HttpException,
-      BadRequestException,
-      ForbiddenException,
-      MethodNotAllowedException,
-      NotFoundException,
-      RequestTimeoutException,
-      UnauthorizedException,
-      UnsupportedMediaTypeException,
-    ],
-    host: ArgumentsHost,
-  ): Promise<any> {
+  async catch(exception: any, host: ArgumentsHost): Promise<any> {
     const response: Response = host.switchToHttp().getResponse();
+    const request: Request = host.switchToHttp().getRequest();
 
     loggerService().error(exception);
 
@@ -90,7 +86,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
       errorResponse.status = 401;
       errorResponse.description =
         'Please Login Again or get a new token from refresh token.';
-    } else if (!response.headersSent) {
+    } else {
+      const status: number = exception?.getStatus() || 500;
+      // eslint-disable-next-line prettier/prettier
+      const message: string = exception?.getMessage() || 'Internal Server Error';
+      loggerService().error(
+        `[${request.method}] ${request.path} >> StatusCode:: ${status}, Message:: ${message}, Stack::${exception.stack}`,
+      );
+
+      errorResponse.message = message;
+      errorResponse.status = status;
+      errorResponse.description = exception.stack;
+    }
+
+    if (!response.headersSent) {
       response.status(errorResponse.status).json(errorResponse).send();
     }
   }

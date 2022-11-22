@@ -2,10 +2,15 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:47
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-21 18:53:44
+ * @Last Modified time: 2022-11-22 22:55:35
  */
 
-import { Module, Logger, CacheModule } from '@nestjs/common';
+import {
+  Module,
+  Logger,
+  CacheModule,
+  MiddlewareConsumer,
+} from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -19,6 +24,8 @@ import { importClassesFromDirectories } from './utils/file-to-class-converter';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './filters/exception.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { NestModule } from '@nestjs/common';
+import { HttpContextMiddleware } from './contexts/express-http.context';
 
 @Module({
   imports: [
@@ -56,4 +63,8 @@ import { APP_FILTER } from '@nestjs/core';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(HttpContextMiddleware).forRoutes('*');
+  }
+}
