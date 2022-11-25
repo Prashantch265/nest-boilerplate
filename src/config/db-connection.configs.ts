@@ -49,6 +49,8 @@ const pgConnection = (
       'entity.ts',
       'entity.js',
     ]),
+    migrations: [`${__dirname}/../database/migrations/*.{ts,js}`],
+    subscribers: [`${__dirname}/../database/subscriber/*.{ts,js}`],
   };
 };
 

@@ -19,6 +19,7 @@
       "remove": "%s removed successfully",
       "loggedIn": "logged in successfully",
       "stored": "%s stored successfully",
-      "publish": "%s published successfully"
+      "publish": "%s published successfully",
+      "verify": "%s verified successfully"
     }
   }

@@ -7,7 +7,7 @@
 
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './pipe/validation.pipe';
 import { loggerService, Stream } from './utils/logger';

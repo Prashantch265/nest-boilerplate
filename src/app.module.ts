@@ -23,9 +23,11 @@ import { ConfigurationModule } from './config/configuration.module';
 import { importClassesFromDirectories } from './utils/file-to-class-converter';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './filters/exception.filter';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { NestModule } from '@nestjs/common';
 import { HttpContextMiddleware } from './contexts/express-http.context';
+import { TransformInterceptor } from './interceptors/transform.interceptor';
+import ContextModule from './contexts/context.module';
 
 @Module({
   imports: [
@@ -51,6 +53,7 @@ import { HttpContextMiddleware } from './contexts/express-http.context';
         };
       },
     }),
+    ContextModule,
     ...importClassesFromDirectories(),
   ],
   controllers: [AppController],
@@ -60,6 +63,10 @@ import { HttpContextMiddleware } from './contexts/express-http.context';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformInterceptor,
     },
   ],
 })
