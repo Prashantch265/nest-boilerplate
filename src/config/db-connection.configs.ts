@@ -5,11 +5,14 @@
  * @Last Modified time: 2022-11-16 15:59:11
  */
 
+import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { Logger } from 'mongodb';
 import { readFilesFromFolder } from 'src/utils/file-to-class-converter';
+import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import readConfigurations from './read-configs';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -32,9 +35,12 @@ const mongooseConnection = (
   };
 };
 
-const pgConnection = (
-  configService: ConfigService,
-): PostgresConnectionOptions => {
+const pgConnectionForTypeOrm = (): PostgresConnectionOptions => {
+  const config = readConfigurations();
+  const configService: ConfigService = new ConfigService<
+    Record<string, unknown>,
+    false
+  >(config);
   const postgresConfig = configService.get('database.postgres');
   return {
     type: 'postgres',
@@ -54,4 +60,33 @@ const pgConnection = (
   };
 };
 
-export { mongooseConnection, pgConnection };
+const pgConnectionForMikroOrm = (): MikroOrmModuleSyncOptions => {
+  const config = readConfigurations();
+  const configService: ConfigService = new ConfigService<
+    Record<string, unknown>,
+    false
+  >(config);
+  const postgresConfig = configService.get('database.postgres');
+  return {
+    type: 'postgresql',
+    dbName: postgresConfig.database,
+    entities: ['./dist/core/**/*.entity.js'],
+    entitiesTs: ['./src/core/**/*.entity.ts'],
+    subscribers: [],
+    host: postgresConfig.host,
+    port: postgresConfig.port,
+    user: postgresConfig.username,
+    password: postgresConfig.password,
+    migrations: {
+      tableName: 'migrations',
+      path: './dist/database/migrations/',
+      pathTs: './src/database/migrations/',
+    },
+  };
+};
+
+const TypeOrmDataSource = new DataSource({ ...pgConnectionForTypeOrm() });
+
+export { mongooseConnection, pgConnectionForTypeOrm, pgConnectionForMikroOrm };
+
+export default TypeOrmDataSource;

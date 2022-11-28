@@ -15,19 +15,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   mongooseConnection,
-  pgConnection,
+  pgConnectionForMikroOrm,
+  pgConnectionForTypeOrm,
 } from './config/db-connection.configs';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigurationModule } from './config/configuration.module';
 import { importClassesFromDirectories } from './utils/file-to-class-converter';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './filters/exception.filter';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { NestModule } from '@nestjs/common';
 import { HttpContextMiddleware } from './contexts/express-http.context';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
 import ContextModule from './contexts/context.module';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
 
 @Module({
   imports: [
@@ -40,19 +42,13 @@ import ContextModule from './contexts/context.module';
       useFactory: async (configService: ConfigService) =>
         mongooseConnection(configService),
     }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (
-        configService: ConfigService,
-      ): Promise<TypeOrmModuleOptions> => {
-        const connection = pgConnection(configService);
-        return {
-          ...connection,
-          retryAttempts: 5,
-        };
-      },
+    TypeOrmModule.forRoot({
+      ...pgConnectionForTypeOrm(),
+      retryAttempts: 5,
     }),
+    // MikroOrmModule.forRoot({
+    //   ...pgConnectionForMikroOrm(),
+    // }),
     ContextModule,
     ...importClassesFromDirectories(),
   ],
