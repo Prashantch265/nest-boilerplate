@@ -19,9 +19,20 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node ./node_modules/typeorm/cli",
+    "generate-migration:prod": "cross-env NODE_ENV=production npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:generate ./src/database/migrations/ -n ",
+    "prod:migrate": "cross-env NODE_ENV=production npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:run",
+    "generate-migration:dev": "cross-env NODE_ENV=development npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:generate ./src/database/migrations/ -n ",
+    "dev:migrate": "cross-env NODE_ENV=development npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:run",
+    "generate-migration:local": "cross-env NODE_ENV=local npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:generate ./src/database/migrations/$npm_config_name ",
+    "local:migrate": "cross-env NODE_ENV=local npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:run",
+    "local:revert": "cross-env NODE_ENV=local npm run typeorm -- -d ./src/config/db-connection.configs.ts migration:revert"
   },
   "dependencies": {
+    "@mikro-orm/core": "^5.5.3",
+    "@mikro-orm/nestjs": "^5.1.2",
+    "@mikro-orm/postgresql": "^5.5.3",
     "@nestjs/common": "^8.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^8.0.0",

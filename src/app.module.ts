@@ -45,6 +45,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
     TypeOrmModule.forRoot({
       ...pgConnectionForTypeOrm(),
       retryAttempts: 5,
+      autoLoadEntities: true,
     }),
     // MikroOrmModule.forRoot({
     //   ...pgConnectionForMikroOrm(),

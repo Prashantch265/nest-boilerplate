@@ -9,7 +9,6 @@ import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { Logger } from 'mongodb';
-import { readFilesFromFolder } from 'src/utils/file-to-class-converter';
 import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import readConfigurations from './read-configs';
@@ -51,10 +50,7 @@ const pgConnectionForTypeOrm = (): PostgresConnectionOptions => {
     database: postgresConfig.database,
     logging: NODE_ENV === 'local' || 'development' ? true : false,
     logger: 'debug',
-    entities: readFilesFromFolder(`${__dirname}/../core/`, [
-      'entity.ts',
-      'entity.js',
-    ]),
+    entities: [`${__dirname}/../core/**/*.entity.{ts,js}`],
     migrations: [`${__dirname}/../database/migrations/*.{ts,js}`],
     subscribers: [`${__dirname}/../database/subscriber/*.{ts,js}`],
   };
@@ -73,6 +69,7 @@ const pgConnectionForMikroOrm = (): MikroOrmModuleSyncOptions => {
     entities: ['./dist/core/**/*.entity.js'],
     entitiesTs: ['./src/core/**/*.entity.ts'],
     subscribers: [],
+    autoLoadEntities: true,
     host: postgresConfig.host,
     port: postgresConfig.port,
     user: postgresConfig.username,
