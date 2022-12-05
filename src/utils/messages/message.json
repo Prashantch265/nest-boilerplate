@@ -8,6 +8,7 @@
       "notFound": "%s not found.",
       "duplicateData": "Duplicate %s found.",
       "tokenExpired": "Access Token has expired.",
+      "invalidToken": "Invalid Token",
       "childExists": "%s is used in %s",
       "permanentData": "You can't delete or update this %s."
     },

@@ -1,8 +1,8 @@
 /*
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:08:48
- * @Last Modified by:   prashant.chaudhary
- * @Last Modified time: 2022-11-13 21:08:48
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-12-03 19:08:54
  */
 
 import { Strategy } from 'passport-jwt';
@@ -16,6 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
     super();
   }
- 
+
   async validateJwt(): Promise<any> {}
 }

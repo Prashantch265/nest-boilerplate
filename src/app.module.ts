@@ -30,18 +30,19 @@ import { HttpContextMiddleware } from './contexts/express-http.context';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
 import ContextModule from './contexts/context.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
+import NodeMailerModule from './mailer/mailer.module';
 
 @Module({
   imports: [
     CacheModule.register({ isGlobal: true, ttl: 0 }),
     ConfigModule.forRoot({ envFilePath: '.env' }),
     ConfigurationModule,
-    MongooseModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) =>
-        mongooseConnection(configService),
-    }),
+    // MongooseModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: async (configService: ConfigService) =>
+    //     mongooseConnection(configService),
+    // }),
     TypeOrmModule.forRoot({
       ...pgConnectionForTypeOrm(),
       retryAttempts: 5,
@@ -51,6 +52,7 @@ import { MikroOrmModule } from '@mikro-orm/nestjs';
     //   ...pgConnectionForMikroOrm(),
     // }),
     ContextModule,
+    NodeMailerModule,
     ...importClassesFromDirectories(),
   ],
   controllers: [AppController],

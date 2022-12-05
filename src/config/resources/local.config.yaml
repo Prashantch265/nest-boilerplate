@@ -14,3 +14,18 @@ database:
     username: postgres
     password: postgres
     database: test
+
+mailer:
+  service: Gmail
+  host: smtp.gmail.com
+  port: 465
+  auth:
+    user:
+    pass:
+  domainName:
+
+jwt:
+  accessTokenExpiresIn: 1h
+  refreshTokenExpiresIn: 2h
+  accessTokenSecret: goUomoyFG1Jb2cfbear9Ml9MI9EvXqme
+  refreshTokenSecret: xXLBHiQZBZp7JtWg3k5GQhnzFF40qky9
