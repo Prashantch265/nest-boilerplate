@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:39:07
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-03 19:45:49
+ * @Last Modified time: 2022-12-05 15:56:31
  */
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -23,4 +23,15 @@ export class LoginData {
   @IsString()
   @IsNotEmpty()
   password: string;
+}
+
+export interface payload {
+  sub: string;
+  userType: userType;
+  iat: number;
+}
+
+export enum userType {
+  INTERNAL = 'internal',
+  EXTERNAL = 'external',
 }

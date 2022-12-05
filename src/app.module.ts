@@ -31,6 +31,8 @@ import { TransformInterceptor } from './interceptors/transform.interceptor';
 import ContextModule from './contexts/context.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import NodeMailerModule from './mailer/mailer.module';
+import AuthModule from './auth/auth.module';
+import UserModule from './core/users/users.module';
 
 @Module({
   imports: [
@@ -54,6 +56,7 @@ import NodeMailerModule from './mailer/mailer.module';
     ContextModule,
     NodeMailerModule,
     ...importClassesFromDirectories(),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

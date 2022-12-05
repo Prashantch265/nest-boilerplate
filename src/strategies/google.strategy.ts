@@ -1,0 +1,56 @@
+/*
+ * @Author: prashant.chaudhary
+ * @Date: 2022-12-05 14:43:26
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-12-05 16:17:19
+ */
+
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { Strategy, VerifyCallback } from 'passport-google-oauth20';
+import StrategyConfigs from './strategy.configs';
+@Injectable()
+export default class GoogleOauthStrategy extends PassportStrategy(
+  Strategy,
+  'google',
+) {
+  constructor(private readonly strategyConfigs: StrategyConfigs) {
+    const googleOauthConfig = strategyConfigs.getGoogleStrategyConfig();
+    super({
+      clientID: googleOauthConfig.clientId,
+      clientSecret: googleOauthConfig.clientSecret,
+      callbackURL: 'http://localhost:3000/auth/google/cb',
+      scope: ['email', 'profile'],
+    });
+  }
+
+  /**
+   * The validate method executes after Google returns the requested user information.
+   * In this method, you decide what to do with the user information returned by Google.
+   * You then return the result using the done method.
+   * @param accessToken
+   * @param refreshToken
+   * @param profile
+   * @param done
+   */
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: VerifyCallback,
+  ): Promise<any> {
+    const { name, emails, photos } = profile;
+    console.log(profile);
+
+    const user = {
+      email: emails[0].value,
+      firstName: name.givenName,
+      lastName: name.familyName,
+      picture: photos[0].value,
+      accessToken,
+      refreshToken,
+    };
+
+    done(null, user);
+  }
+}

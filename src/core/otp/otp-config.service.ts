@@ -16,7 +16,7 @@ import { OtpConfiguration } from './otp.interface';
 export default class OtpConfigService {
   constructor(
     @InjectRepository(OTP)
-    private otpRepository: Repository<OTP>,
+    private readonly otpRepository: Repository<OTP>,
   ) {}
 
   async findOneByField(where = {}, relations = []) {

@@ -2,18 +2,19 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-03 19:57:26
+ * @Last Modified time: 2022-12-05 15:57:10
  */
 
 import { Injectable } from '@nestjs/common';
 import ExternalUserService from 'src/core/external-users/external-users.service';
 import UserService from 'src/core/users/users.service';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
-import { LoginData } from './auth.interface';
+import { LoginData, payload, userType } from './auth.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { loggerService } from 'src/utils/logger';
+import { AuthorizationException } from 'src/exceptions/unauthorized.exception';
 
 @Injectable()
 export class AuthService {
@@ -35,9 +36,9 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
 
-    const payload = {
+    const payload: payload = {
       sub: existingUser.userId,
-      userType: 'internal',
+      userType: userType.INTERNAL,
       iat: Date.now(),
     };
 
@@ -65,9 +66,9 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
 
-    const payload = {
+    const payload: payload = {
       sub: existingUser.userId,
-      userType: 'external',
+      userType: userType.EXTERNAL,
       iat: Date.now(),
     };
 
@@ -86,7 +87,7 @@ export class AuthService {
 
   async validateRefreshToken(refreshToken: string) {
     try {
-      let payload = this.jwtService.verify(refreshToken, {
+      let payload: payload = this.jwtService.verify(refreshToken, {
         secret: this.jwtConfig.refreshTokenSecret,
       });
 
@@ -104,11 +105,11 @@ export class AuthService {
         });
       }
 
-      if (!existingUser) throw new RuntimeException(401, 'invalidToken');
+      if (!existingUser) throw new AuthorizationException(401, 'invalidToken');
 
       payload = {
         sub: existingUser.userId,
-        userType: 'external',
+        userType: userType,
         iat: Date.now(),
       };
 
@@ -128,4 +129,8 @@ export class AuthService {
       throw new RuntimeException(401, 'invalidToken');
     }
   }
+
+  async saveUserFromGoogle(user) {}
+
+  async saveUserFromFacebook(user) {}
 }

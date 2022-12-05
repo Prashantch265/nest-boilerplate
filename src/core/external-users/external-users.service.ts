@@ -1,7 +1,9 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
+import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import ExternalUser from './external-users.entity';
 
+@Injectable()
 export default class ExternalUserService {
   constructor(
     @InjectRepository(ExternalUser)

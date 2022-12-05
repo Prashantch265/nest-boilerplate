@@ -20,8 +20,8 @@ mailer:
   host: smtp.gmail.com
   port: 465
   auth:
-    user:
-    pass:
+    user: notifications.dopetech@gmail.com
+    pass: helishchy9591
   domainName:
 
 jwt:
@@ -29,3 +29,11 @@ jwt:
   refreshTokenExpiresIn: 2h
   accessTokenSecret: goUomoyFG1Jb2cfbear9Ml9MI9EvXqme
   refreshTokenSecret: xXLBHiQZBZp7JtWg3k5GQhnzFF40qky9
+
+oauth:
+  google:
+    clientId: 927949735021-op33jcgrhh6jel07fvdr88tra59efh3r.apps.googleusercontent.com
+    clientSecret: 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
+  facebook:
+    appId: 502459464655499
+    appSecret: c75842421c384189f840011a78517513

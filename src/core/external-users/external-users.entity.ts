@@ -9,6 +9,12 @@ export default class ExternalUser {
   @Column({ name: 'user_name' })
   userName: string;
 
+  @Column({ name: 'first_name' })
+  firstName: string;
+
+  @Column({ name: 'last_name' })
+  lastName: string;
+
   @Column({ name: 'email', nullable: true })
   email?: string;
 
@@ -34,5 +40,11 @@ export default class ExternalUser {
   otpType?: string;
 
   @Column({ name: 'token', nullable: true })
-  token?: string;
+  sub?: string;
+
+  @Column({ name: 'access_token', nullable: true })
+  accessToken: string;
+
+  @Column({ name: 'refresh_token', nullable: true })
+  refreshToken: string;
 }

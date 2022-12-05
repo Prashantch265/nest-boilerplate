@@ -2,20 +2,33 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:08:48
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-03 19:08:54
+ * @Last Modified time: 2022-12-05 15:36:09
  */
 
-import { Strategy } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
-import { AuthorizationException } from 'src/exceptions/unauthorized.exception';
-import { AuthService } from 'src/auth/auth.service';
+import StrategyConfigs from './strategy.configs';
+import { payload } from 'src/auth/auth.interface';
+import { RequestContextProvider } from 'src/contexts/express-http.context';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private authService: AuthService) {
-    super();
+export default class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(
+    private readonly strategyConfigs: StrategyConfigs,
+    private readonly requestContextProviders: RequestContextProvider,
+  ) {
+    const jwtConfig = strategyConfigs.getJwtConfig();
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: jwtConfig.accessTokenSecret,
+    });
   }
 
-  async validateJwt(): Promise<any> {}
+  async validate(payload: payload) {
+    const user = { userId: payload.sub, userType: payload.userType };
+    this.requestContextProviders.set('user', user);
+    return;
+  }
 }
