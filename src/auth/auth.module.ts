@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:20:20
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 15:02:35
+ * @Last Modified time: 2022-12-06 15:00:10
  */
 
 import { Module } from '@nestjs/common';
@@ -15,6 +15,7 @@ import UserModule from 'src/core/users/users.module';
 import ExternalUsersModule from 'src/core/external-users/external-users.module';
 import StrategyConfigs from 'src/strategies/strategy.configs';
 import GoogleOauthStrategy from 'src/strategies/google.strategy';
+import FacebookOauthStrategy from 'src/strategies/facebook.strategy';
 
 @Module({
   imports: [
@@ -26,7 +27,13 @@ import GoogleOauthStrategy from 'src/strategies/google.strategy';
       verifyOptions: { algorithms: ['HS256'] },
     }),
   ],
-  providers: [AuthService, StrategyConfigs, JwtStrategy, GoogleOauthStrategy],
+  providers: [
+    AuthService,
+    StrategyConfigs,
+    JwtStrategy,
+    GoogleOauthStrategy,
+    FacebookOauthStrategy,
+  ],
   controllers: [AuthController],
   exports: [],
 })

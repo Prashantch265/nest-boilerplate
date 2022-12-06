@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:39:07
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 15:56:31
+ * @Last Modified time: 2022-12-06 15:05:17
  */
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -36,7 +36,7 @@ export enum userType {
   EXTERNAL = 'external',
 }
 
-export interface googleOauthUser {
+export interface OauthUser {
   sub: number;
   email: string;
   userName: string;

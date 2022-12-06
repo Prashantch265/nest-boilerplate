@@ -2,19 +2,14 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 15:57:10
+ * @Last Modified time: 2022-12-06 15:06:06
  */
 
 import { Injectable } from '@nestjs/common';
 import ExternalUserService from 'src/core/external-users/external-users.service';
 import UserService from 'src/core/users/users.service';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
-import {
-  googleOauthUser,
-  LoginData,
-  payload,
-  userType,
-} from './auth.interface';
+import { OauthUser, LoginData, payload, userType } from './auth.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -135,7 +130,7 @@ export class AuthService {
     }
   }
 
-  async saveUserFromGoogle(user: googleOauthUser) {
+  async saveUserFromGoogle(user: OauthUser) {
     let existingUser = await this.externalUserService.findOneByField({
       sub: user.sub,
     });
@@ -163,5 +158,31 @@ export class AuthService {
     return { accessToken: accessToken, refreshToken: refreshToken };
   }
 
-  async saveUserFromFacebook(user) {}
+  async saveUserFromFacebook(user: OauthUser) {
+    let existingUser = await this.externalUserService.findOneByField({
+      sub: user.sub,
+    });
+
+    if (!existingUser) {
+      existingUser = await this.externalUserService.saveUserFromOauth(user);
+    }
+
+    const payload: payload = {
+      sub: existingUser.userId,
+      userType: userType.EXTERNAL,
+      iat: Date.now(),
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: this.jwtConfig.accessTokenExpiresIn,
+      secret: this.jwtConfig.accessTokenSecret,
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: this.jwtConfig.refreshTokenExpiresIn,
+      secret: this.jwtConfig.refreshTokenSecret,
+    });
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
+  }
 }
