@@ -39,14 +39,16 @@ export default class GoogleOauthStrategy extends PassportStrategy(
     profile: any,
     done: VerifyCallback,
   ): Promise<any> {
-    const { name, emails, photos } = profile;
-    console.log(profile);
+    const { id, name, emails, photos, displayName, provider } = profile;
 
     const user = {
+      sub: id,
       email: emails[0].value,
+      userName: displayName,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos[0].value,
+      provider: provider,
       accessToken,
       refreshToken,
     };

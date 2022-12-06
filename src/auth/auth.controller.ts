@@ -3,7 +3,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:38:56
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 16:00:47
+ * @Last Modified time: 2022-12-05 22:48:30
  */
 
 import {
@@ -16,6 +16,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RequestContextProvider } from 'src/contexts/express-http.context';
+import { Public } from 'src/decorators/public-route.decorator';
 import { ResponseMessage } from 'src/decorators/response.decorator';
 import { GoogleOAuthGuard } from 'src/guards/google-oauth.guard';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
@@ -36,17 +37,20 @@ export default class AuthController {
     console.log(this.requestContextProvider.get('user'));
   }
 
+  @Public()
   @Post('/get-new-access-token')
   async getNewAccessToken(refreshToken: string) {
     return await this.authService.validateRefreshToken(refreshToken);
   }
 
+  @Public()
   @ResponseMessage('loggedIn')
   @Post('/internal/login')
   async authenticateInternalUser(@Body() loginData: LoginData) {
     return await this.authService.findInternalUser(loginData);
   }
 
+  @Public()
   @ResponseMessage('loggedIn')
   @Post('/external/login')
   async authenticateExternalUser(@Body() loginData: LoginData) {
@@ -56,6 +60,7 @@ export default class AuthController {
   @Get('/login/facebook')
   async loginWithFacebook(@Request() req) {}
 
+  @ResponseMessage('loggedIn')
   @Get('/facebook/cb')
   async facebookOauthRedirect(@Request() req) {
     const { user } = req;
@@ -66,12 +71,12 @@ export default class AuthController {
   @Get('/login/google')
   async loginWithGoogle(@Request() req) {}
 
+  @ResponseMessage('loggedIn')
   @UseGuards(GoogleOAuthGuard)
   @Get('/google/cb')
   async googleOauthRedirect(@Request() req) {
     const { user } = req;
     console.log(user);
-    // return await this.authService.saveUserFromGoogle(user);
-    return;
+    return await this.authService.saveUserFromGoogle(user);
   }
 }

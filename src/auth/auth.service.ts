@@ -9,7 +9,12 @@ import { Injectable } from '@nestjs/common';
 import ExternalUserService from 'src/core/external-users/external-users.service';
 import UserService from 'src/core/users/users.service';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
-import { LoginData, payload, userType } from './auth.interface';
+import {
+  googleOauthUser,
+  LoginData,
+  payload,
+  userType,
+} from './auth.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -130,7 +135,33 @@ export class AuthService {
     }
   }
 
-  async saveUserFromGoogle(user) {}
+  async saveUserFromGoogle(user: googleOauthUser) {
+    let existingUser = await this.externalUserService.findOneByField({
+      sub: user.sub,
+    });
+
+    if (!existingUser) {
+      existingUser = await this.externalUserService.saveUserFromOauth(user);
+    }
+
+    const payload: payload = {
+      sub: existingUser.userId,
+      userType: userType.EXTERNAL,
+      iat: Date.now(),
+    };
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: this.jwtConfig.accessTokenExpiresIn,
+      secret: this.jwtConfig.accessTokenSecret,
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: this.jwtConfig.refreshTokenExpiresIn,
+      secret: this.jwtConfig.refreshTokenSecret,
+    });
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
+  }
 
   async saveUserFromFacebook(user) {}
 }

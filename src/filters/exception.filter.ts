@@ -43,22 +43,28 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const response: Response = host.switchToHttp().getResponse();
     const request: Request = host.switchToHttp().getRequest();
 
-    loggerService().error(exception);
+    loggerService().error(exception.stack);
 
-    let errorResponse: errorResponse;
+    const errorResponse: errorResponse = {
+      success: false,
+      message: '',
+      status: 0,
+      description: undefined,
+    };
 
     if (exception instanceof TypeORMError) {
       errorResponse.message = 'Something Went Wrong!';
       errorResponse.status = 500;
       errorResponse.description = exception.message;
     } else if (exception instanceof UnauthorizedException) {
-      errorResponse.message = 'Unauthorized';
+      errorResponse.message = exception.message;
       errorResponse.status = exception.getStatus();
     } else if (exception instanceof ForbiddenException) {
-      errorResponse.message = 'Forbidden';
+      errorResponse.message = exception.message;
       errorResponse.status = exception.getStatus();
     } else if (exception instanceof NotFoundException) {
-      errorResponse.message = 'Route Not Found';
+      errorResponse.message = exception.name;
+      errorResponse.description = exception.message;
       errorResponse.status = exception.getStatus();
     } else if (exception instanceof BadRequestException) {
       errorResponse.message = 'Bad Request';
@@ -69,7 +75,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       errorResponse.description = exception.getErrors();
       errorResponse.status = exception.getStatus();
     } else if (exception instanceof RequestTimeoutException) {
-      errorResponse.message = 'Bad Request';
+      errorResponse.message = exception.message;
       errorResponse.status = exception.getStatus();
     } else if (exception instanceof MethodNotAllowedException) {
       errorResponse.message = 'Bad Request';

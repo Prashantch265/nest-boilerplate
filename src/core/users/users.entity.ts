@@ -1,7 +1,8 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import CommonEntity from '../Common/entities/common.entity';
 
 @Entity({ name: 'users' })
-export default class User {
+export default class User extends CommonEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   userId: string;
 

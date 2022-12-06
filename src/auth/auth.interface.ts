@@ -35,3 +35,15 @@ export enum userType {
   INTERNAL = 'internal',
   EXTERNAL = 'external',
 }
+
+export interface googleOauthUser {
+  sub: number;
+  email: string;
+  userName: string;
+  firstName: string;
+  lastName: string;
+  picture?: string;
+  provider: string;
+  accessToken: string;
+  refreshToken?: string;
+}

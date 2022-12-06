@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:47
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-22 22:55:35
+ * @Last Modified time: 2022-12-05 22:46:03
  */
 
 import {
@@ -24,7 +24,7 @@ import { ConfigurationModule } from './config/configuration.module';
 import { importClassesFromDirectories } from './utils/file-to-class-converter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpExceptionFilter } from './filters/exception.filter';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { NestModule } from '@nestjs/common';
 import { HttpContextMiddleware } from './contexts/express-http.context';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
@@ -32,7 +32,7 @@ import ContextModule from './contexts/context.module';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import NodeMailerModule from './mailer/mailer.module';
 import AuthModule from './auth/auth.module';
-import UserModule from './core/users/users.module';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -70,6 +70,10 @@ import UserModule from './core/users/users.module';
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
     },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
   ],
 })
 export class AppModule implements NestModule {

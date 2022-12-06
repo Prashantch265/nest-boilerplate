@@ -1,8 +1,9 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import CommonEntity from '../Common/entities/common.entity';
 import { Type } from '../otp/otp.interface';
 
 @Entity({ name: 'external_users' })
-export default class ExternalUser {
+export default class ExternalUser extends CommonEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   userId: string;
 
@@ -14,6 +15,9 @@ export default class ExternalUser {
 
   @Column({ name: 'last_name' })
   lastName: string;
+
+  @Column({ name: 'profile_pic', nullable: true })
+  profilePic: string;
 
   @Column({ name: 'email', nullable: true })
   email?: string;
@@ -43,8 +47,8 @@ export default class ExternalUser {
   sub?: string;
 
   @Column({ name: 'access_token', nullable: true })
-  accessToken: string;
+  accessToken?: string;
 
   @Column({ name: 'refresh_token', nullable: true })
-  refreshToken: string;
+  refreshToken?: string;
 }
