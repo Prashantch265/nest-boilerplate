@@ -19,6 +19,9 @@ export default class OTP extends PrimaryEntity {
   @Column({ name: 'special_char', type: 'boolean', default: false })
   specialChar: boolean;
 
+  @Column({ name: 'digits', type: 'boolean', default: false })
+  digits: boolean;
+
   @Column({ name: 'type', type: 'enum', enum: Type, default: 'web' })
   type: string;
 }

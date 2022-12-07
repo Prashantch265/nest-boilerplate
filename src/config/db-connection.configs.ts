@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 11:50:16
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 15:59:11
+ * @Last Modified time: 2022-12-06 22:38:33
  */
 
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
@@ -48,7 +48,7 @@ const pgConnectionForTypeOrm = (): PostgresConnectionOptions => {
     username: postgresConfig.username,
     password: postgresConfig.password,
     database: postgresConfig.database,
-    logging: NODE_ENV === 'local' || 'development' ? true : false,
+    logging: process.env.NODE_ENV === 'local' || 'development' ? true : false,
     logger: 'debug',
     entities: [`${__dirname}/../core/**/*.entity.{ts,js}`],
     migrations: [`${__dirname}/../database/migrations/*.{ts,js}`],

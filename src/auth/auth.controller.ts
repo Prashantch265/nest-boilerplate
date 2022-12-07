@@ -21,7 +21,7 @@ import { ResponseMessage } from 'src/decorators/response.decorator';
 import { FacebookOauthGuard } from 'src/guards/facebook-oauth.guard';
 import { GoogleOAuthGuard } from 'src/guards/google-oauth.guard';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { LoginData } from './auth.interface';
+import { LoginData, RegisterUser } from './auth.interface';
 import { AuthService } from './auth.service';
 
 @ApiTags('authentication')
@@ -38,6 +38,12 @@ export default class AuthController {
   @Get('/init')
   async init(@Request() req) {
     return this.requestContextProvider.get('user');
+  }
+
+  @ResponseMessage('register', 'user')
+  @Post('/register')
+  async register(@Body() data: RegisterUser) {
+    return await this.authService.registerExternalUser(data);
   }
 
   @Public()

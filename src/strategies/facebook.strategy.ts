@@ -21,14 +21,14 @@ export default class FacebookOauthStrategy extends PassportStrategy(Strategy) {
     profile: Profile,
     done: (err: any, user: any, info?: any) => void,
   ): Promise<any> {
-    const { id, name, emails, displayName, photos, provider } = profile;
+    const { id, emails, displayName, photos, provider, _json } = profile;
 
     const user = {
       sub: id,
       userName: displayName,
       email: emails[0].value,
-      firstName: name.givenName,
-      lastName: name.familyName,
+      firstName: _json.name.split(' ')[0],
+      lastName: _json.name.split(' ')[1],
       picture: photos[0].value,
       provider: provider,
       accessToken,

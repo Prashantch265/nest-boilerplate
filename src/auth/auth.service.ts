@@ -2,19 +2,27 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 15:06:06
+ * @Last Modified time: 2022-12-06 23:04:20
  */
 
 import { Injectable } from '@nestjs/common';
 import ExternalUserService from 'src/core/external-users/external-users.service';
 import UserService from 'src/core/users/users.service';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
-import { OauthUser, LoginData, payload, userType } from './auth.interface';
+import {
+  OauthUser,
+  LoginData,
+  payload,
+  userType,
+  RegisterUser,
+} from './auth.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { loggerService } from 'src/utils/logger';
 import { AuthorizationException } from 'src/exceptions/unauthorized.exception';
+import OtpService from 'src/core/otp/otp.service';
+import { Type } from 'src/core/otp/otp.interface';
 
 @Injectable()
 export class AuthService {
@@ -23,9 +31,32 @@ export class AuthService {
     private readonly externalUserService: ExternalUserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly otpService: OtpService,
   ) {}
 
   private readonly jwtConfig = this.configService.get('jwt');
+
+  async registerExternalUser(user: RegisterUser) {
+    const existingUser = await this.externalUserService.findOneByField({
+      email: user.email,
+      userName: user.userName,
+    });
+    if (existingUser) throw new RuntimeException(400, 'duplicateData', 'user');
+
+    const existingUserName = await this.externalUserService.findOneByField({
+      userName: user.userName,
+    });
+    if (existingUserName)
+      throw new RuntimeException(400, 'usernameNotAvailable');
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    const resData = await this.externalUserService.saveUserFromSignUp(user);
+    const { email, userName } = resData;
+    await this.otpService.sendOtpOnMail(Type.WEB, email);
+
+    return { email: email, userName: userName };
+  }
 
   async findInternalUser(loginData: LoginData) {
     const { userName, email, password } = loginData;

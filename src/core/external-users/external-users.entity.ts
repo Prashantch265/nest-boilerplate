@@ -22,6 +22,9 @@ export default class ExternalUser extends CommonEntity {
   @Column({ name: 'email', nullable: true })
   email?: string;
 
+  @Column({ name: 'contact_no', nullable: true })
+  contactNo?: string;
+
   @Column({ name: 'provider', nullable: true })
   provider?: string;
 

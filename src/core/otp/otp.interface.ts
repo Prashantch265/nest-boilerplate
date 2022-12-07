@@ -32,6 +32,12 @@ export class OtpConfiguration {
 
   @ApiProperty({
     type: Boolean,
+    description: 'OTP should contain digits or not',
+  })
+  digits: boolean;
+
+  @ApiProperty({
+    type: Boolean,
     description: 'OTP should contain alphabets or not',
   })
   @IsOptional()

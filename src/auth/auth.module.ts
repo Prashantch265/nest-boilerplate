@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:20:20
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 15:00:10
+ * @Last Modified time: 2022-12-06 23:01:56
  */
 
 import { Module } from '@nestjs/common';
@@ -16,6 +16,7 @@ import ExternalUsersModule from 'src/core/external-users/external-users.module';
 import StrategyConfigs from 'src/strategies/strategy.configs';
 import GoogleOauthStrategy from 'src/strategies/google.strategy';
 import FacebookOauthStrategy from 'src/strategies/facebook.strategy';
+import OtpModule from 'src/core/otp/otp.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import FacebookOauthStrategy from 'src/strategies/facebook.strategy';
       signOptions: { algorithm: 'HS256' },
       verifyOptions: { algorithms: ['HS256'] },
     }),
+    OtpModule,
   ],
   providers: [
     AuthService,
