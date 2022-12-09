@@ -2,13 +2,13 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-06 22:05:22
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 22:55:33
+ * @Last Modified time: 2022-12-09 15:17:16
  */
 
 import { Injectable } from '@nestjs/common';
 import ExternalUserService from '../external-users/external-users.service';
 import OtpConfigService from './otp-config.service';
-import { RecievedOtp, Type } from './otp.interface';
+import { RecievedOtpDto, Type } from './otp.interface';
 import otpGenerator from 'otp-generator';
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
@@ -66,7 +66,7 @@ export default class OtpService {
     return await this.mailerService.sendMail(data);
   }
 
-  async verifyOtp(recievedOtp: RecievedOtp) {
+  async verifyOtp(recievedOtp: RecievedOtpDto) {
     const { type, otp, email, phoneNo } = recievedOtp;
     let savedOtp;
     if (type === Type.WEB) {

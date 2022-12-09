@@ -1,11 +1,11 @@
 import { InjectRepository } from '@mikro-orm/nestjs';
 import { Injectable } from '@nestjs/common';
-import { RegisterUser } from 'src/auth/auth.interface';
+import { RegisterUserDto } from 'src/auth/auth.interface';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
 import { Repository } from 'typeorm';
-import { RecievedOtp } from '../otp/otp.interface';
+import { RecievedOtpDto } from '../otp/otp.interface';
 import ExternalUser from './external-users.entity';
-import { externalUser } from './external-users.interface';
+import { externalUserDto } from './external-users.interface';
 
 @Injectable()
 export default class ExternalUserService {
@@ -19,12 +19,12 @@ export default class ExternalUserService {
     return this.externalUserRepository.findOne({ select, where, relations });
   }
 
-  async saveUserFromSignUp(user: RegisterUser) {
+  async saveUserFromSignUp(user: RegisterUserDto) {
     return await this.externalUserRepository.save(user);
   }
 
   async saveUserFromOauth(user: any) {
-    const userData: externalUser = {
+    const userData: externalUserDto = {
       userName: user.userName,
       firstName: user.firstName,
       lastName: user.lastName,
@@ -38,7 +38,7 @@ export default class ExternalUserService {
     return await this.externalUserRepository.save(userData);
   }
 
-  async update(user: externalUser | any, where = {}) {
+  async update(user: externalUserDto | any, where = {}) {
     const existingUser = await this.findOneByField({ where });
     if (!existingUser) throw new RuntimeException(400, 'notFound', 'user');
     const updatedUser = { ...existingUser, ...user };

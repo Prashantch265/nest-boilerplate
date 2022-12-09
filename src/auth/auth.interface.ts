@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:39:07
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 15:05:17
+ * @Last Modified time: 2022-12-09 15:18:14
  */
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -14,7 +14,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class LoginData {
+export class LoginDataDto {
   @ApiProperty({ type: String, description: 'Registered Email' })
   @IsEmail()
   @IsOptional()
@@ -31,7 +31,7 @@ export class LoginData {
   password: string;
 }
 
-export interface payload {
+export interface payloadDto {
   sub: string;
   userType: userType;
   iat: number;
@@ -42,7 +42,7 @@ export enum userType {
   EXTERNAL = 'external',
 }
 
-export interface OauthUser {
+export interface OauthUserDto {
   sub: number;
   email: string;
   userName: string;
@@ -54,7 +54,7 @@ export interface OauthUser {
   refreshToken?: string;
 }
 
-export class RegisterUser {
+export class RegisterUserDto {
   @ApiProperty({ type: String, description: 'firstName' })
   @IsNotEmpty()
   @IsString()

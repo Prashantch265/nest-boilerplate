@@ -13,7 +13,7 @@ export enum Type {
   MOBILE = 'mobile',
 }
 
-export class OtpConfiguration {
+export class OtpConfigurationDto {
   @ApiProperty({
     type: Number,
     description: 'OTP length',
@@ -69,7 +69,7 @@ export class OtpConfiguration {
   type: Type;
 }
 
-export class GetNewOtpParams {
+export class GetNewOtpParamsDto {
   @ApiProperty({
     type: String,
     description: 'This define OTP type',
@@ -97,7 +97,7 @@ export class GetNewOtpParams {
   phoneNo?: string;
 }
 
-export class RecievedOtp {
+export class RecievedOtpDto {
   @ApiProperty({
     type: String,
     description: 'This define OTP type',

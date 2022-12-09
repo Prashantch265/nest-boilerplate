@@ -3,7 +3,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:38:56
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 15:09:06
+ * @Last Modified time: 2022-12-09 15:18:39
  */
 
 import {
@@ -21,7 +21,7 @@ import { ResponseMessage } from 'src/decorators/response.decorator';
 import { FacebookOauthGuard } from 'src/guards/facebook-oauth.guard';
 import { GoogleOAuthGuard } from 'src/guards/google-oauth.guard';
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { LoginData, RegisterUser } from './auth.interface';
+import { LoginDataDto, RegisterUserDto } from './auth.interface';
 import { AuthService } from './auth.service';
 
 @ApiTags('authentication')
@@ -42,7 +42,7 @@ export default class AuthController {
 
   @ResponseMessage('register', 'user')
   @Post('/register')
-  async register(@Body() data: RegisterUser) {
+  async register(@Body() data: RegisterUserDto) {
     return await this.authService.registerExternalUser(data);
   }
 
@@ -55,15 +55,15 @@ export default class AuthController {
   @Public()
   @ResponseMessage('loggedIn')
   @Post('/internal/login')
-  async authenticateInternalUser(@Body() loginData: LoginData) {
-    return await this.authService.findInternalUser(loginData);
+  async authenticateInternalUser(@Body() loginDataDLoginDataDto: LoginDataDto) {
+    return await this.authService.findInternalUser(loginDataDLoginDataDto);
   }
 
   @Public()
   @ResponseMessage('loggedIn')
   @Post('/external/login')
-  async authenticateExternalUser(@Body() loginData: LoginData) {
-    return await this.authService.findExternalUser(loginData);
+  async authenticateExternalUser(@Body() loginDataDLoginDataDto: LoginDataDto) {
+    return await this.authService.findExternalUser(loginDataDLoginDataDto);
   }
 
   @UseGuards(FacebookOauthGuard)
