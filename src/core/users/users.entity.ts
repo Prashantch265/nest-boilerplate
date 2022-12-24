@@ -6,6 +6,15 @@ export default class User extends CommonEntity {
   @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
   userId: string;
 
+  @Column({ name: 'full_name' })
+  fullName: string;
+
+  @Column({ name: 'contact' })
+  contact: string;
+
+  @Column({ name: 'profile_pic', nullable: true })
+  profilePic: string;
+
   @Column({ name: 'user_name' })
   userName: string;
 

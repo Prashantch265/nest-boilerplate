@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-16 20:55:19
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-30 20:43:23
+ * @Last Modified time: 2022-12-09 15:14:29
  */
 
 import {
@@ -19,9 +19,9 @@ import { ApiTags } from '@nestjs/swagger';
 import { ResponseMessage } from 'src/decorators/response.decorator';
 import OtpConfigService from './otp-config.service';
 import {
-  GetNewOtpParams,
-  OtpConfiguration,
-  RecievedOtp,
+  GetNewOtpParamsDto,
+  OtpConfigurationDto,
+  RecievedOtpDto,
 } from './otp.interface';
 import OtpService from './otp.service';
 
@@ -35,7 +35,7 @@ export default class OtpController {
   @ApiTags('otp')
   @ResponseMessage('fetch', 'New OTP')
   @Get('/')
-  async getNewOtp(@Query() params: GetNewOtpParams) {
+  async getNewOtp(@Query() params: GetNewOtpParamsDto) {
     // if (params.type === 'web') {
     //   return await this.otpService.sendOtpOnMail(params.type, params.email);
     // }
@@ -45,7 +45,7 @@ export default class OtpController {
   @ApiTags('otp')
   @ResponseMessage('verify', 'OTP')
   @Post('/')
-  async verifyOtp(@Body() otp: RecievedOtp) {
+  async verifyOtp(@Body() otp: RecievedOtpDto) {
     // return await this.otpService.verifyOtp(otp);
   }
 
@@ -59,7 +59,7 @@ export default class OtpController {
   @ApiTags('otp-config')
   @ResponseMessage('create', 'OTP Configurations')
   @Post('/config')
-  async addOtpConfig(@Body() data: OtpConfiguration) {
+  async addOtpConfig(@Body() data: OtpConfigurationDto) {
     return await this.otpConfigService.addOtpConfig(data);
   }
 
@@ -75,7 +75,7 @@ export default class OtpController {
   @Put('/config/:id')
   async updateOtpConfig(
     @Param('id') id: number,
-    @Body() data: OtpConfiguration,
+    @Body() data: OtpConfigurationDto,
   ) {
     return await this.otpConfigService.updateOtpConfig(id, data);
   }

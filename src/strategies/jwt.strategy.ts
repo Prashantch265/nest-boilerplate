@@ -2,14 +2,14 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:08:48
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 15:36:09
+ * @Last Modified time: 2022-12-09 15:24:50
  */
 
 import { ExtractJwt, Strategy, VerifyCallback } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import StrategyConfigs from './strategy.configs';
-import { payload } from 'src/auth/auth.interface';
+import { payloadDto } from 'src/auth/auth.interface';
 import { RequestContextProvider } from 'src/contexts/express-http.context';
 import UserService from 'src/core/users/users.service';
 import ExternalUserService from 'src/core/external-users/external-users.service';
@@ -31,7 +31,7 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: payload, done: VerifyCallback): Promise<any> {
+  async validate(payload: payloadDto, done: VerifyCallback): Promise<any> {
     const { sub, userType } = payload;
     let existingUser;
     if (userType === 'internal')

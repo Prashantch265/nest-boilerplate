@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 23:04:20
+ * @Last Modified time: 2022-12-09 15:20:29
  */
 
 import { Injectable } from '@nestjs/common';
@@ -10,11 +10,11 @@ import ExternalUserService from 'src/core/external-users/external-users.service'
 import UserService from 'src/core/users/users.service';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
 import {
-  OauthUser,
-  LoginData,
-  payload,
+  OauthUserDto,
+  LoginDataDto,
+  payloadDto,
   userType,
-  RegisterUser,
+  RegisterUserDto,
 } from './auth.interface';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -36,7 +36,7 @@ export class AuthService {
 
   private readonly jwtConfig = this.configService.get('jwt');
 
-  async registerExternalUser(user: RegisterUser) {
+  async registerExternalUser(user: RegisterUserDto) {
     const existingUser = await this.externalUserService.findOneByField({
       email: user.email,
       userName: user.userName,
@@ -58,7 +58,7 @@ export class AuthService {
     return { email: email, userName: userName };
   }
 
-  async findInternalUser(loginData: LoginData) {
+  async findInternalUser(loginData: LoginDataDto) {
     const { userName, email, password } = loginData;
     const condition = userName ? { userName: userName } : { email: email };
     const existingUser = await this.userService.findOneByField(condition);
@@ -67,7 +67,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
 
-    const payload: payload = {
+    const payload: payloadDto = {
       sub: existingUser.userId,
       userType: userType.INTERNAL,
       iat: Date.now(),
@@ -86,7 +86,7 @@ export class AuthService {
     return { accessToken: accessToken, refreshToken: refreshToken };
   }
 
-  async findExternalUser(loginData: LoginData) {
+  async findExternalUser(loginData: LoginDataDto) {
     const { userName, email, password } = loginData;
     const condition = userName ? { userName: userName } : { email: email };
     const existingUser = await this.externalUserService.findOneByField(
@@ -97,7 +97,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(password, existingUser.password);
     if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
 
-    const payload: payload = {
+    const payload: payloadDto = {
       sub: existingUser.userId,
       userType: userType.EXTERNAL,
       iat: Date.now(),
@@ -118,7 +118,7 @@ export class AuthService {
 
   async validateRefreshToken(refreshToken: string) {
     try {
-      let payload: payload = this.jwtService.verify(refreshToken, {
+      let payload: payloadDto = this.jwtService.verify(refreshToken, {
         secret: this.jwtConfig.refreshTokenSecret,
       });
 
@@ -161,7 +161,7 @@ export class AuthService {
     }
   }
 
-  async saveUserFromGoogle(user: OauthUser) {
+  async saveUserFromGoogle(user: OauthUserDto) {
     let existingUser = await this.externalUserService.findOneByField({
       sub: user.sub,
     });
@@ -170,7 +170,7 @@ export class AuthService {
       existingUser = await this.externalUserService.saveUserFromOauth(user);
     }
 
-    const payload: payload = {
+    const payload: payloadDto = {
       sub: existingUser.userId,
       userType: userType.EXTERNAL,
       iat: Date.now(),
@@ -189,7 +189,7 @@ export class AuthService {
     return { accessToken: accessToken, refreshToken: refreshToken };
   }
 
-  async saveUserFromFacebook(user: OauthUser) {
+  async saveUserFromFacebook(user: OauthUserDto) {
     let existingUser = await this.externalUserService.findOneByField({
       sub: user.sub,
     });
@@ -198,7 +198,7 @@ export class AuthService {
       existingUser = await this.externalUserService.saveUserFromOauth(user);
     }
 
-    const payload: payload = {
+    const payload: payloadDto = {
       sub: existingUser.userId,
       userType: userType.EXTERNAL,
       iat: Date.now(),

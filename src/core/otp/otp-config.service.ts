@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-16 20:40:53
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 20:54:47
+ * @Last Modified time: 2022-12-09 15:15:01
  */
 
 import { Injectable } from '@nestjs/common';
@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RuntimeException } from 'src/exceptions/runtime.exception';
 import { Repository } from 'typeorm';
 import OTP from './otp.entity';
-import { OtpConfiguration } from './otp.interface';
+import { OtpConfigurationDto } from './otp.interface';
 
 @Injectable()
 export default class OtpConfigService {
@@ -24,7 +24,7 @@ export default class OtpConfigService {
     return this.otpRepository.findOne({ where, relations });
   }
 
-  async addOtpConfig(data: OtpConfiguration) {
+  async addOtpConfig(data: OtpConfigurationDto) {
     const duplicateData = await this.findOneByField({ type: data.type });
     if (duplicateData)
       throw new RuntimeException(400, 'duplicateData', 'otp-configuration');
@@ -32,7 +32,7 @@ export default class OtpConfigService {
     return resData;
   }
 
-  async updateOtpConfig(id: number, data: OtpConfiguration) {
+  async updateOtpConfig(id: number, data: OtpConfigurationDto) {
     const existingData = await this.findOneByField({ id: id });
     if (!existingData)
       throw new RuntimeException(400, 'notFound', 'otp-configuration');

@@ -2,7 +2,7 @@ import { Column, Entity } from 'typeorm';
 import PrimaryEntity from '../Common/entities/primary.entity';
 import { Type } from './otp.interface';
 
-@Entity({ name: 'otp_configuration' })
+@Entity({ name: 'otp_configurations' })
 export default class OTP extends PrimaryEntity {
   @Column({ name: 'otp_length' })
   otpLength: number;

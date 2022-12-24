@@ -1,4 +1,4 @@
-export interface externalUser {
+export interface externalUserDto {
   userName: string;
 
   firstName: string;
