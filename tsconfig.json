@@ -18,6 +18,23 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@auth/*": ["src/auth/*"],
+      "@config/*": ["src/config/*"],
+      "@contexts/*": ["src/contexts/*"],
+      "@core/*": ["src/core/*"],
+      "@database/*": ["src/database/*"],
+      "@decorators/*": ["src/decorators/*"],
+      "@exceptions/*": ["src/exceptions/*"],
+      "@filters/*": ["src/filters/*"],
+      "@graphql/*": ["src/graphql/*"],
+      "@guards/*": ["src/guards/*"],
+      "@interceptors/*": ["src/interceptors/*"],
+      "@mailer/*": ["src/mailer/*"],
+      "@pipe/*": ["src/pipe/*"],
+      "@strategies/*": ["src/strategies/*"],
+      "@utils/*": ["src/utils/*"],
+    }
   }
 }
