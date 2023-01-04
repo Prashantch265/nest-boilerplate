@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export enum Type {
+export enum OtpType {
   WEB = 'web',
   MOBILE = 'mobile',
 }
@@ -63,20 +63,20 @@ export class OtpConfigurationDto {
   @ApiProperty({
     type: String,
     description: 'This define OTP type',
-    enum: Type,
+    enum: OtpType,
   })
   @IsNotEmpty()
-  type: Type;
+  type: OtpType;
 }
 
 export class GetNewOtpParamsDto {
   @ApiProperty({
     type: String,
     description: 'This define OTP type',
-    enum: Type,
+    enum: OtpType,
   })
   @IsNotEmpty()
-  type: Type;
+  type: OtpType;
 
   @ApiProperty({
     type: String,
@@ -101,10 +101,10 @@ export class RecievedOtpDto {
   @ApiProperty({
     type: String,
     description: 'This define OTP type',
-    enum: Type,
+    enum: OtpType,
   })
   @IsNotEmpty()
-  type: Type;
+  type: OtpType;
 
   @ApiProperty({
     type: String,

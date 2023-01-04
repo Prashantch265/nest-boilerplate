@@ -2,11 +2,11 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:22
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-21 18:56:31
+ * @Last Modified time: 2022-12-26 22:47:30
  */
 
 import { ConfigService } from '@nestjs/config';
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import morgan from 'morgan';
 import { AppModule } from './app.module';
 import { CustomValidationPipe } from './pipe/validation.pipe';
@@ -34,9 +34,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
 
-  SwaggerModule.setup('api', app, document);
-
-  app.useGlobalFilters(new HttpExceptionFilter());
+  SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(port);
 }

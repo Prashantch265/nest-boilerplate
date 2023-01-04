@@ -2,9 +2,10 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-21 18:20:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-03 18:30:57
+ * @Last Modified time: 2023-01-03 17:12:04
  */
 
+import { SuccessMessage } from '@core/Common/interfaces/common.interface';
 import {
   Injectable,
   NestInterceptor,
@@ -15,7 +16,6 @@ import { Reflector } from '@nestjs/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { successResponse } from 'src/utils';
-import { successMsg } from '../utils/messages/message.json';
 import util from 'util';
 
 export interface Response<T> {
@@ -39,7 +39,7 @@ export class TransformInterceptor<T>
           success: true,
           source: source,
           data: data,
-          message: util.format(successMsg[message], source),
+          message: util.format(message, source),
           status: 200,
         };
         return success;

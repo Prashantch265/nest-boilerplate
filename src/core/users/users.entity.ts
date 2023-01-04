@@ -1,26 +1,46 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import CommonEntity from '../Common/entities/common.entity';
+/*
+ * @Author: prashant.chaudhary
+ * @Date: 2022-12-25 23:34:43
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2022-12-30 23:09:03
+ */
 
-@Entity({ name: 'users' })
+import CommonEntity from '@core/Common/entities/common.entity';
+import {
+  Entity,
+  EntityRepositoryType,
+  PrimaryKey,
+  Property,
+} from '@mikro-orm/core';
+import { v4 } from 'uuid';
+import UserRepository from './users.repository';
+
+@Entity({ tableName: 'users', customRepository: () => UserRepository })
 export default class User extends CommonEntity {
-  @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
-  userId: string;
+  @PrimaryKey({
+    name: 'user_id',
+    type: 'uuid',
+  })
+  userId: string = v4();
 
-  @Column({ name: 'full_name' })
+  @Property({ name: 'full_name' })
   fullName: string;
 
-  @Column({ name: 'contact' })
+  @Property({ name: 'contact' })
   contact: string;
 
-  @Column({ name: 'profile_pic', nullable: true })
+  @Property({ name: 'profile_pic', nullable: true })
   profilePic: string;
 
-  @Column({ name: 'user_name' })
+  @Property({ name: 'user_name' })
   userName: string;
 
-  @Column({ name: 'email', nullable: true })
+  @Property({ name: 'email', nullable: true })
   email: string;
 
-  @Column({ name: 'password', nullable: true })
+  @Property({ name: 'password', nullable: true })
   password: string;
+
+  // to allow inference in `em.getRepository()`
+  [EntityRepositoryType]?: UserRepository;
 }

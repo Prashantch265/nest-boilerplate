@@ -1,14 +1,39 @@
-import PrimaryEntity from 'src/core/Common/entities/primary.entity';
-import { Column, Entity } from 'typeorm';
+/*
+ * @Author: prashant.chaudhary
+ * @Date: 2022-12-28 20:00:10
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2023-01-01 23:17:17
+ */
 
-@Entity({ name: 'user-role' })
+import PrimaryEntity from '@core/Common/entities/primary.entity';
+import ExternalUser from '@core/external-users/external-users.entity';
+import User from '@core/users/users.entity';
+import { Entity, EntityRepositoryType, ManyToOne } from '@mikro-orm/core';
+import Role from '../role/role.entity';
+import UserRoleRepository from './user-role.repository';
+
+@Entity({ tableName: 'user_role', customRepository: () => UserRoleRepository })
 export default class UserRole extends PrimaryEntity {
-  @Column({ name: 'user_id' })
-  userId: string;
+  @ManyToOne(() => User, {
+    onDelete: 'cascade',
+    name: 'internal_user_id',
+    nullable: true,
+  })
+  internalUserId: string;
 
-  @Column({ name: 'role_id' })
+  @ManyToOne(() => ExternalUser, {
+    onDelete: 'cascade',
+    name: 'external_user_id',
+    nullable: true,
+  })
+  externalUserId: string;
+
+  @ManyToOne(() => Role, {
+    onDelete: 'cascade',
+    nullable: true,
+    name: 'role_id',
+  })
   roleId: number;
 
-  @Column({ name: 'role_code' })
-  roleCode: string;
+  [EntityRepositoryType]?: UserRoleRepository;
 }

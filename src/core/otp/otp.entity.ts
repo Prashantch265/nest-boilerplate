@@ -1,27 +1,34 @@
-import { Column, Entity } from 'typeorm';
-import PrimaryEntity from '../Common/entities/primary.entity';
-import { Type } from './otp.interface';
+/*
+ * @Author: prashant.chaudhary
+ * @Date: 2022-12-25 22:18:03
+ * @Last Modified by: prashant.chaudhary
+ * @Last Modified time: 2023-01-03 17:24:38
+ */
 
-@Entity({ name: 'otp_configurations' })
+import PrimaryEntity from '@core/Common/entities/primary.entity';
+import { Entity, Enum, Property } from '@mikro-orm/core';
+import { OtpType } from './otp.dto';
+
+@Entity({ tableName: 'otp_configurations' })
 export default class OTP extends PrimaryEntity {
-  @Column({ name: 'otp_length' })
+  @Property({ name: 'otp_length' })
   otpLength: number;
 
-  @Column({ name: 'expiration_time' })
+  @Property({ name: 'expiration_time' })
   expirationTime: string;
 
-  @Column({ name: 'alphabets', type: 'boolean', default: false })
+  @Property({ name: 'alphabets', type: 'boolean', default: false })
   alphabets: boolean;
 
-  @Column({ name: 'uppercase', type: 'boolean', default: false })
+  @Property({ name: 'uppercase', type: 'boolean', default: false })
   upperCase: boolean;
 
-  @Column({ name: 'special_char', type: 'boolean', default: false })
+  @Property({ name: 'special_char', type: 'boolean', default: false })
   specialChar: boolean;
 
-  @Column({ name: 'digits', type: 'boolean', default: false })
+  @Property({ name: 'digits', type: 'boolean', default: false })
   digits: boolean;
 
-  @Column({ name: 'type', type: 'enum', enum: Type, default: 'web' })
-  type: string;
+  @Enum({ items: () => OtpType, name: 'type', default: OtpType.WEB })
+  type: OtpType;
 }

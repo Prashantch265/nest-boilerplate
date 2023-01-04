@@ -2,23 +2,22 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:08:48
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-09 15:24:50
+ * @Last Modified time: 2023-01-02 16:44:33
  */
 
-import { ExtractJwt, Strategy, VerifyCallback } from 'passport-jwt';
-import { PassportStrategy } from '@nestjs/passport';
+import { payloadDto } from '@auth/auth.interface';
+import ExternalUserService from '@core/external-users/external-users.service';
+import UserService from '@core/users/users.service';
+import { RequestContext } from '@mikro-orm/core';
 import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy, VerifyCallback } from 'passport-jwt';
 import StrategyConfigs from './strategy.configs';
-import { payloadDto } from 'src/auth/auth.interface';
-import { RequestContextProvider } from 'src/contexts/express-http.context';
-import UserService from 'src/core/users/users.service';
-import ExternalUserService from 'src/core/external-users/external-users.service';
 
 @Injectable()
 export default class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     private readonly strategyConfigs: StrategyConfigs,
-    private readonly requestContextProviders: RequestContextProvider,
     private readonly userService: UserService,
     private readonly externalUserService: ExternalUserService,
   ) {
@@ -35,16 +34,26 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
     const { sub, userType } = payload;
     let existingUser;
     if (userType === 'internal')
-      existingUser = await this.userService.findOneByField({ userId: sub });
+      existingUser = await this.userService.findOneByFeild(
+        { userId: sub },
+        { fields: ['userId'] },
+      );
     else
-      existingUser = await this.externalUserService.findOneByField({
-        userId: sub,
-      });
+      existingUser = await this.externalUserService.findOneByField(
+        {
+          userId: sub,
+        },
+        { fields: ['userId'] },
+      );
 
     if (!existingUser) {
       done(null, existingUser);
     } else {
-      await this.requestContextProviders.set('user', existingUser);
+      RequestContext.currentRequestContext().map.set(
+        'userId',
+        existingUser.userId,
+      );
+      existingUser.userType = userType;
       done(null, existingUser);
     }
   }

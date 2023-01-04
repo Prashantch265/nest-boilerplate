@@ -5,6 +5,7 @@
  * @Last Modified time: 2022-12-09 15:14:29
  */
 
+import { SuccessMessage } from '@core/Common/interfaces/common.interface';
 import {
   Body,
   Controller,
@@ -22,7 +23,7 @@ import {
   GetNewOtpParamsDto,
   OtpConfigurationDto,
   RecievedOtpDto,
-} from './otp.interface';
+} from './otp.dto';
 import OtpService from './otp.service';
 
 @Controller('otp')
@@ -33,7 +34,7 @@ export default class OtpController {
   ) {}
 
   @ApiTags('otp')
-  @ResponseMessage('fetch', 'New OTP')
+  @ResponseMessage(SuccessMessage.FETCH, 'New OTP')
   @Get('/')
   async getNewOtp(@Query() params: GetNewOtpParamsDto) {
     // if (params.type === 'web') {
@@ -43,35 +44,35 @@ export default class OtpController {
   }
 
   @ApiTags('otp')
-  @ResponseMessage('verify', 'OTP')
+  @ResponseMessage(SuccessMessage.VERIFY, 'OTP')
   @Post('/')
   async verifyOtp(@Body() otp: RecievedOtpDto) {
     // return await this.otpService.verifyOtp(otp);
   }
 
   @ApiTags('otp-config')
-  @ResponseMessage('fetch', 'OTP Configurations')
+  @ResponseMessage(SuccessMessage.FETCH, 'OTP Configurations')
   @Get('/config')
   async getAllOtpConfig() {
     return await this.otpConfigService.getAllOtpConfig();
   }
 
   @ApiTags('otp-config')
-  @ResponseMessage('create', 'OTP Configurations')
+  @ResponseMessage(SuccessMessage.CREATE, 'OTP Configurations')
   @Post('/config')
   async addOtpConfig(@Body() data: OtpConfigurationDto) {
     return await this.otpConfigService.addOtpConfig(data);
   }
 
   @ApiTags('otp-config')
-  @ResponseMessage('fetch', 'OTP Configurations')
+  @ResponseMessage(SuccessMessage.FETCH, 'OTP Configurations')
   @Get('/config/:id')
   async getById(@Param('id') id: number) {
     return await this.otpConfigService.getOtpConfigById(id);
   }
 
   @ApiTags('otp-config')
-  @ResponseMessage('update', 'OTP configurations')
+  @ResponseMessage(SuccessMessage.UPDATE, 'OTP configurations')
   @Put('/config/:id')
   async updateOtpConfig(
     @Param('id') id: number,
@@ -81,7 +82,7 @@ export default class OtpController {
   }
 
   @ApiTags('otp-config')
-  @ResponseMessage('delete', 'OTP configurations')
+  @ResponseMessage(SuccessMessage.DELETE, 'OTP configurations')
   @Delete('/config/:id')
   async deleteOtpConfig(@Param('id') id: number) {
     return await this.otpConfigService.deleteOtpConfig(id);

@@ -7,5 +7,5 @@
 
 import { SetMetadata } from '@nestjs/common';
 
-export const SKIP_AUTH = 'SkipAuth';
-export const Public = () => SetMetadata(SKIP_AUTH, true);
+export const IS_PUBLIC_ROUTE = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_ROUTE, true);

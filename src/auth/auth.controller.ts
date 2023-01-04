@@ -3,25 +3,26 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:38:56
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-09 15:18:39
+ * @Last Modified time: 2023-01-02 11:58:53
  */
 
+import { UserRoleService } from '@core/authorization/user-role/user-role.service';
+import { SuccessMessage } from '@core/Common/interfaces/common.interface';
+import { Public } from '@decorators/public-route.decorator';
+import { ResponseMessage } from '@decorators/response.decorator';
+import { FacebookOauthGuard } from '@guards/facebook-oauth.guard';
+import { GoogleOAuthGuard } from '@guards/google-oauth.guard';
+import { JwtAuthGuard } from '@guards/jwt-auth.guard';
 import {
-  Body,
   Controller,
+  UseGuards,
   Get,
   Post,
+  Body,
   Request,
-  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { RequestContextProvider } from 'src/contexts/express-http.context';
-import { Public } from 'src/decorators/public-route.decorator';
-import { ResponseMessage } from 'src/decorators/response.decorator';
-import { FacebookOauthGuard } from 'src/guards/facebook-oauth.guard';
-import { GoogleOAuthGuard } from 'src/guards/google-oauth.guard';
-import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
-import { LoginDataDto, RegisterUserDto } from './auth.interface';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { RegisterUserDto, LoginDataDto } from './auth.interface';
 import { AuthService } from './auth.service';
 
 @ApiTags('authentication')
@@ -29,38 +30,41 @@ import { AuthService } from './auth.service';
 export default class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly requestContextProvider: RequestContextProvider,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @ResponseMessage('fetch', 'user')
+  @ResponseMessage(SuccessMessage.FETCH, 'permissions')
   @Get('/init')
   async init(@Request() req) {
-    return this.requestContextProvider.get('user');
+    console.log(req);
+    const { userId, userType } = req.user;
+    return await this.userRoleService.getPermissionsForUser(userId, userType);
   }
 
-  @ResponseMessage('register', 'user')
+  @ResponseMessage(SuccessMessage.REGISTER, 'user')
   @Post('/register')
   async register(@Body() data: RegisterUserDto) {
     return await this.authService.registerExternalUser(data);
   }
 
   @Public()
+  @ResponseMessage(SuccessMessage.REFRESH, 'access-token')
   @Post('/get-new-access-token')
   async getNewAccessToken(refreshToken: string) {
     return await this.authService.validateRefreshToken(refreshToken);
   }
 
   @Public()
-  @ResponseMessage('loggedIn')
+  @ResponseMessage(SuccessMessage.LOGGED_IN)
   @Post('/internal/login')
   async authenticateInternalUser(@Body() loginDataDLoginDataDto: LoginDataDto) {
     return await this.authService.findInternalUser(loginDataDLoginDataDto);
   }
 
   @Public()
-  @ResponseMessage('loggedIn')
+  @ResponseMessage(SuccessMessage.LOGGED_IN)
   @Post('/external/login')
   async authenticateExternalUser(@Body() loginDataDLoginDataDto: LoginDataDto) {
     return await this.authService.findExternalUser(loginDataDLoginDataDto);

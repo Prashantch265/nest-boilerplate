@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /*
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 11:30:17
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 20:47:56
+ * @Last Modified time: 2022-12-26 00:11:30
  */
 
 import {
@@ -64,7 +65,7 @@ export class CustomValidationPipe implements PipeTransform<any> {
       ErrorFormatter(errors);
     }
 
-    return value;
+    return object;
   }
 
   protected validateMetaType(metadata: ArgumentMetadata): boolean {

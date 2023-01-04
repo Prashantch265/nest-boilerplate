@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 11:46:21
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 15:57:51
+ * @Last Modified time: 2023-01-02 15:05:09
  */
 
 import * as path from 'path';
@@ -33,7 +33,7 @@ export const readFilesFromFolder = (
 
 export function importClassesFromDirectories() {
   const paths = readFilesFromFolder(
-    path.resolve(__dirname + '/../../dist/core/'),
+    path.resolve(__dirname + '/../../src/core/'),
     ['module.js', 'module.ts'],
   );
 

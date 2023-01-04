@@ -2,27 +2,28 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-09 15:20:29
+ * @Last Modified time: 2023-01-02 12:12:09
  */
 
-import { Injectable } from '@nestjs/common';
-import ExternalUserService from 'src/core/external-users/external-users.service';
-import UserService from 'src/core/users/users.service';
-import { RuntimeException } from 'src/exceptions/runtime.exception';
+import ExternalUserService from '@core/external-users/external-users.service';
+import OtpService from '@core/otp/otp.service';
+import UserService from '@core/users/users.service';
+import { RuntimeException } from '@exceptions/runtime.exception';
+import { AuthorizationException } from '@exceptions/unauthorized.exception';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { loggerService } from '@utils/logger';
 import {
-  OauthUserDto,
+  RegisterUserDto,
   LoginDataDto,
   payloadDto,
   userType,
-  RegisterUserDto,
+  OauthUserDto,
 } from './auth.interface';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { loggerService } from 'src/utils/logger';
-import { AuthorizationException } from 'src/exceptions/unauthorized.exception';
-import OtpService from 'src/core/otp/otp.service';
-import { Type } from 'src/core/otp/otp.interface';
+import { OtpType } from '@core/otp/otp.dto';
+import { ErrorMessage } from '@core/Common/interfaces/common.interface';
 
 @Injectable()
 export class AuthService {
@@ -41,19 +42,20 @@ export class AuthService {
       email: user.email,
       userName: user.userName,
     });
-    if (existingUser) throw new RuntimeException(400, 'duplicateData', 'user');
+    if (existingUser)
+      throw new RuntimeException(400, ErrorMessage.DUPLICATE_DATA, 'user');
 
     const existingUserName = await this.externalUserService.findOneByField({
       userName: user.userName,
     });
     if (existingUserName)
-      throw new RuntimeException(400, 'usernameNotAvailable');
+      throw new RuntimeException(400, ErrorMessage.USERNAME_NOT_AVAILABLE);
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     const resData = await this.externalUserService.saveUserFromSignUp(user);
     const { email, userName } = resData;
-    await this.otpService.sendOtpOnMail(Type.WEB, email);
+    await this.otpService.sendOtpOnMail(OtpType.WEB, email);
 
     return { email: email, userName: userName };
   }
@@ -61,11 +63,13 @@ export class AuthService {
   async findInternalUser(loginData: LoginDataDto) {
     const { userName, email, password } = loginData;
     const condition = userName ? { userName: userName } : { email: email };
-    const existingUser = await this.userService.findOneByField(condition);
-    if (!existingUser) throw new RuntimeException(400, 'invalidCredential');
+    const existingUser = await this.userService.findOneByFeild(condition);
+    if (!existingUser)
+      throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
-    if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
+    if (!isMatch)
+      throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
     const payload: payloadDto = {
       sub: existingUser.userId,
@@ -92,10 +96,12 @@ export class AuthService {
     const existingUser = await this.externalUserService.findOneByField(
       condition,
     );
-    if (!existingUser) throw new RuntimeException(400, 'invalidCredential');
+    if (!existingUser)
+      throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
     const isMatch = await bcrypt.compare(password, existingUser.password);
-    if (!isMatch) throw new RuntimeException(400, 'invalidCredential');
+    if (!isMatch)
+      throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
     const payload: payloadDto = {
       sub: existingUser.userId,
@@ -127,16 +133,26 @@ export class AuthService {
       let existingUser;
 
       if (userType === 'internal') {
-        existingUser = await this.userService.findOneByField({
-          userId: sub,
-        });
+        existingUser = await this.userService.findOneByFeild(
+          {
+            userId: sub,
+          },
+          { fields: ['userId'] },
+        );
       } else {
-        existingUser = await this.externalUserService.findOneByField({
-          userId: sub,
-        });
+        existingUser = await this.externalUserService.findOneByField(
+          {
+            userId: sub,
+          },
+          { fields: ['userId'] },
+        );
       }
 
-      if (!existingUser) throw new AuthorizationException(401, 'invalidToken');
+      if (!existingUser)
+        throw new AuthorizationException(
+          HttpStatus.UNAUTHORIZED,
+          ErrorMessage.INVALID_TOKEN,
+        );
 
       payload = {
         sub: existingUser.userId,
@@ -157,7 +173,10 @@ export class AuthService {
       return { accessToken: accessToken, refreshToken: refreshToken };
     } catch (err) {
       loggerService().error(err);
-      throw new RuntimeException(401, 'invalidToken');
+      throw new RuntimeException(
+        HttpStatus.UNAUTHORIZED,
+        ErrorMessage.INVALID_TOKEN,
+      );
     }
   }
 

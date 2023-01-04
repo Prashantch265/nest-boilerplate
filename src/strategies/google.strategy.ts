@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-05 14:43:26
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 16:17:19
+ * @Last Modified time: 2023-01-02 14:45:49
  */
 
 import { Injectable } from '@nestjs/common';
@@ -17,7 +17,7 @@ export default class GoogleOauthStrategy extends PassportStrategy(
   constructor(private readonly strategyConfigs: StrategyConfigs) {
     const googleOauthConfig = strategyConfigs.getGoogleStrategyConfig();
     super({
-      clientID: googleOauthConfig.clientId,
+      clientID: googleOauthConfig.clientID,
       clientSecret: googleOauthConfig.clientSecret,
       callbackURL: 'http://localhost:3000/auth/google/cb',
       scope: ['email', 'profile'],

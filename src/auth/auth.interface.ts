@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-03 19:39:07
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-09 15:18:14
+ * @Last Modified time: 2022-12-25 23:23:50
  */
 
 import { ApiProperty } from '@nestjs/swagger';

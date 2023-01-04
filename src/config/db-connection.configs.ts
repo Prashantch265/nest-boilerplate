@@ -2,16 +2,19 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 11:50:16
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-06 22:38:33
+ * @Last Modified time: 2022-12-28 19:54:12
  */
 
+import { MikroEntitySubscriber } from '@database/subscribers/mikro-entity.subscriber';
+import { Utils } from '@mikro-orm/core';
+import { TSMigrationGenerator } from '@mikro-orm/migrations';
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
 import { ConfigService } from '@nestjs/config';
 import { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
-import { Logger } from 'mongodb';
-import { DataSource } from 'typeorm';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { Logger } from 'mongodb';
 import readConfigurations from './read-configs';
+import { loggerService } from '@utils/logger';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -52,7 +55,9 @@ const pgConnectionForTypeOrm = (): PostgresConnectionOptions => {
     logger: 'debug',
     entities: [`${__dirname}/../core/**/*.entity.{ts,js}`],
     migrations: [`${__dirname}/../database/migrations/*.{ts,js}`],
-    subscribers: [`${__dirname}/../database/subscriber/*.{ts,js}`],
+    subscribers: [
+      `${__dirname}/../database/subscribers/typeorm-entity.subscriber.{ts,js}`,
+    ],
   };
 };
 
@@ -66,24 +71,39 @@ const pgConnectionForMikroOrm = (): MikroOrmModuleSyncOptions => {
   return {
     type: 'postgresql',
     dbName: postgresConfig.database,
-    entities: ['./dist/core/**/*.entity.js'],
+    entities: ['./src/core/**/*.entity.js'],
     entitiesTs: ['./src/core/**/*.entity.ts'],
-    subscribers: [],
+    subscribers: [new MikroEntitySubscriber()],
     autoLoadEntities: true,
     host: postgresConfig.host,
     port: postgresConfig.port,
     user: postgresConfig.username,
     password: postgresConfig.password,
+    registerRequestContext: true,
+    debug: process.env.NODE_ENV === 'local' || 'development' ? true : false,
+    logger: (msg) => loggerService().log(msg),
     migrations: {
       tableName: 'migrations',
-      path: './dist/database/migrations/',
-      pathTs: './src/database/migrations/',
+      path: Utils.detectTsNode()
+        ? './src/database/migrations/'
+        : './dist/database/migrations/',
+      glob: '!(*.d).{js,ts}',
+      transactional: true,
+      emit: 'ts',
+      snapshot: false,
+      generator: TSMigrationGenerator,
+    },
+    seeder: {
+      path: Utils.detectTsNode()
+        ? './src/database/seeder/'
+        : './dist/database/seeder/',
+      pathTs: undefined,
+      defaultSeeder: 'DatabaseSeeder',
+      glob: '!(*.d).{js,ts}',
+      emit: 'ts',
+      fileName: (className: string) => className,
     },
   };
 };
 
-const TypeOrmDataSource = new DataSource({ ...pgConnectionForTypeOrm() });
-
 export { mongooseConnection, pgConnectionForTypeOrm, pgConnectionForMikroOrm };
-
-export default TypeOrmDataSource;

@@ -2,48 +2,35 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-16 20:15:46
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-11-16 20:20:15
+ * @Last Modified time: 2022-12-30 22:54:30
  */
 
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Property } from '@mikro-orm/core';
 
 export default class CommonEntity {
-  @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-  })
-  public created_at: Date;
+  @Property({ name: 'created_at', nullable: true })
+  createdAt: Date = new Date();
 
-  @UpdateDateColumn({
-    select: false,
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP(6)',
-    onUpdate: 'CURRENT_TIMESTAMP(6)',
-  })
-  public updated_at: Date;
+  @Property({ name: 'updated_at', onUpdate: () => new Date(), nullable: true })
+  updatedAt: Date;
 
-  @Column({ name: 'created_by', type: 'uuid', nullable: true })
+  @Property({ name: 'created_by', type: 'uuid', nullable: true })
   createdBy: string;
 
-  @Column({ name: 'updated_by', type: 'uuid', nullable: true, select: false })
+  @Property({ name: 'updated_by', type: 'uuid', nullable: true })
   updatedBy: string;
 
-  @Column({ name: 'is_active', type: 'boolean', default: true, select: false })
+  @Property({
+    name: 'is_active',
+    type: 'boolean',
+    default: true,
+  })
   isActive: boolean;
 
-  @Column({
-    name: 'is_deleted',
-    type: 'boolean',
-    default: false,
-    select: false,
-  })
-  isDeleted: boolean;
-
-  @Column({
+  @Property({
     name: 'is_permanent',
     type: 'boolean',
     default: false,
-    select: false,
   })
   isPermanent: boolean;
 }

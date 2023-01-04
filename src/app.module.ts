@@ -2,37 +2,22 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:47
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-05 22:46:03
+ * @Last Modified time: 2023-01-02 16:04:03
  */
 
-import {
-  Module,
-  Logger,
-  CacheModule,
-  MiddlewareConsumer,
-} from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import {
-  mongooseConnection,
-  pgConnectionForMikroOrm,
-  pgConnectionForTypeOrm,
-} from './config/db-connection.configs';
+import AuthModule from '@auth/auth.module';
+import { ConfigurationModule } from '@config/configuration.module';
+import { pgConnectionForMikroOrm } from '@config/db-connection.configs';
+import { HttpExceptionFilter } from '@filters/exception.filter';
+import { TransformInterceptor } from '@interceptors/transform.interceptor';
+import NodeMailerModule from '@mailer/mailer.module';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { CacheModule, Logger, Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { importClassesFromDirectories } from '@utils/file-to-class-converter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigurationModule } from './config/configuration.module';
-import { importClassesFromDirectories } from './utils/file-to-class-converter';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpExceptionFilter } from './filters/exception.filter';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { NestModule } from '@nestjs/common';
-import { HttpContextMiddleware } from './contexts/express-http.context';
-import { TransformInterceptor } from './interceptors/transform.interceptor';
-import ContextModule from './contexts/context.module';
-import { MikroOrmModule } from '@mikro-orm/nestjs';
-import NodeMailerModule from './mailer/mailer.module';
-import AuthModule from './auth/auth.module';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -45,15 +30,14 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
     //   useFactory: async (configService: ConfigService) =>
     //     mongooseConnection(configService),
     // }),
-    TypeOrmModule.forRoot({
-      ...pgConnectionForTypeOrm(),
-      retryAttempts: 5,
-      autoLoadEntities: true,
-    }),
-    // MikroOrmModule.forRoot({
-    //   ...pgConnectionForMikroOrm(),
+    // TypeOrmModule.forRoot({
+    //   ...pgConnectionForTypeOrm(),
+    //   retryAttempts: 5,
+    //   autoLoadEntities: true,
     // }),
-    ContextModule,
+    MikroOrmModule.forRoot({
+      ...pgConnectionForMikroOrm(),
+    }),
     NodeMailerModule,
     ...importClassesFromDirectories(),
     AuthModule,
@@ -76,8 +60,4 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
     // },
   ],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer.apply(HttpContextMiddleware).forRoutes('*');
-  }
-}
+export class AppModule {}
