@@ -1,5 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "assets": [
+      {
+        "watchAssets": true,
+        "include": "config/**/*.yaml",
+        "outDir": "dist/src"
+      },
+      { "watchAssets": true, "include": "graphql/*.gql", "outDir": "dist/src" }
+    ],
+    "watchAssets": true
+  }
 }

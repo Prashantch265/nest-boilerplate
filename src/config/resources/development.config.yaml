@@ -1,0 +1,39 @@
+http: 
+  port: 3000
+  
+database:
+  mongodb:
+    host: 
+    port: 27017
+    userName: 
+    password: 
+    database: 
+  postgres:
+    host: 
+    port: 5432
+    username: 
+    password: 
+    database: 
+
+mailer:
+  service: Gmail
+  host: smtp.gmail.com
+  port: 465
+  auth:
+    user: notifications.dopetech@gmail.com
+    pass: helishchy9591
+  domainName:
+
+jwt:
+  accessTokenExpiresIn: 1h
+  refreshTokenExpiresIn: 2h
+  accessTokenSecret: goUomoyFG1Jb2cfbear9Ml9MI9EvXqme
+  refreshTokenSecret: xXLBHiQZBZp7JtWg3k5GQhnzFF40qky9
+
+oauth:
+  google:
+    clientId: 764337029995-angoin8104p2o81thsktcran8jlf0eds.apps.googleusercontent.com
+    clientSecret: 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
+  facebook:
+    appId: 1122407995086846
+    appSecret: 6fd74e3a9eceaed8ee8ee5db6719fc6a
