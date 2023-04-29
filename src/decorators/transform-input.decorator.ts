@@ -18,7 +18,14 @@ export const ToLowerCase = () => {
 };
 
 export const ToTrimmed = () => {
-  return Transform((params) => params?.value?.trim());
+  return Transform((params) => params?.value?.trim(), {});
+};
+
+export const NullIfEmptyString = () => {
+  return Transform(
+    (params) => (params?.value === '' ? null : params?.value),
+    {},
+  );
 };
 
 export const ToEncodeToBase64 = () => {
