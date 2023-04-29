@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-10-20 10:53:22
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-26 22:47:30
+ * @Last Modified time: 2023-04-29 21:59:03
  */
 
 import { ConfigService } from '@nestjs/config';
@@ -36,6 +36,11 @@ async function bootstrap() {
 
   SwaggerModule.setup('api-docs', app, document);
 
-  await app.listen(port);
+  await app.listen(port, () => {
+    console.info(`=================================`);
+    console.info(` ========= ENV: ${process.env.NODE_ENV} ========= `);
+    console.info(`🚀 App listening on the port ${port}`);
+    console.info(`=================================`);
+  });
 }
 bootstrap();

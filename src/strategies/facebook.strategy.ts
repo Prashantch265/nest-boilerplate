@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-05 14:43:26
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2023-01-02 16:46:20
+ * @Last Modified time: 2023-04-29 21:46:33
  */
 
 import { Injectable } from '@nestjs/common';
@@ -18,8 +18,8 @@ export default class FacebookOauthStrategy extends PassportStrategy(
   constructor(private readonly strategyConfigs: StrategyConfigs) {
     const facebookOauthConfig = strategyConfigs.getFacebookStrategyConfig();
     super({
-      clientID: facebookOauthConfig.clientID,
-      clientSecret: facebookOauthConfig.clientSecret,
+      clientID: facebookOauthConfig.appId,
+      clientSecret: facebookOauthConfig.appSecret,
       callbackURL: 'http://localhost:3000/auth/facebook/cb',
       profileFields: ['id', 'displayName', 'photos', 'emails'],
     });

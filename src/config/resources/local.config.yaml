@@ -32,8 +32,8 @@ jwt:
 
 oauth:
   google:
-    clientID: 
+    clientId: 
     clientSecret: 
   facebook:
-    clientID: 
-    clientSecret: 
+    appId: 
+    appSecret:  
