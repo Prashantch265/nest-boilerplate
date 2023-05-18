@@ -2,35 +2,27 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-16 20:15:46
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-30 22:54:30
+ * @Last Modified time: 2023-05-12 11:15:27
  */
 
-import { Property } from '@mikro-orm/core';
+import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 export default class CommonEntity {
-  @Property({ name: 'created_at', nullable: true })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date = new Date();
 
-  @Property({ name: 'updated_at', onUpdate: () => new Date(), nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date = new Date();
 
-  @Property({ name: 'created_by', type: 'uuid', nullable: true })
+  @Column({ name: 'created_by', type: 'uuid', nullable: true })
   createdBy: string;
 
-  @Property({ name: 'updated_by', type: 'uuid', nullable: true })
+  @Column({ name: 'updated_by', type: 'uuid', nullable: true })
   updatedBy: string;
 
-  @Property({
-    name: 'is_active',
-    type: 'boolean',
-    default: true,
-  })
+  @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
-  @Property({
-    name: 'is_permanent',
-    type: 'boolean',
-    default: false,
-  })
+  @Column({ name: 'is_permanent', type: 'boolean', default: false })
   isPermanent: boolean;
 }

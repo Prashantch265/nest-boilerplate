@@ -2,74 +2,47 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-25 23:17:39
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2023-01-03 16:47:33
+ * @Last Modified time: 2023-05-12 14:43:35
  */
 
 import { RegisterUserDto } from '@auth/auth.interface';
 import { ErrorMessage } from '@core/Common/interfaces/common.interface';
 import { RuntimeException } from '@exceptions/runtime.exception';
-import { FindOneOptions } from '@mikro-orm/core';
-import { InjectRepository } from '@mikro-orm/nestjs';
-import { EntityRepository } from '@mikro-orm/postgresql';
 import { Injectable } from '@nestjs/common';
 import ExternalUser from './external-users.entity';
 import { externalUserDto } from './external-users.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import ExternalUserRepository from './external-users.repository';
+import { FindOneOptions } from 'typeorm';
 
 @Injectable()
 export default class ExternalUserService {
   constructor(
-    /**
-     * InjectRepository
-     * We can create repository with @InjectRepository() or by extendidng EntityRepository also known as Cutsom Repository.
-     */
     @InjectRepository(ExternalUser)
-    private readonly externalUserRepository: EntityRepository<ExternalUser>,
+    private readonly externalUserRepository: ExternalUserRepository,
   ) {}
 
-  async findOneByField(
-    where = {},
-    findOptions: FindOneOptions<ExternalUser> = {},
-  ) {
-    where = { ...where, isActive: true };
-    return this.externalUserRepository.findOne(where, findOptions);
-  }
-
   async saveUserFromSignUp(user: RegisterUserDto) {
-    const externalUser: ExternalUser = this.externalUserRepository.create({
-      ...ExternalUser,
-      ...user,
-    });
-    await this.externalUserRepository.persistAndFlush(externalUser);
-    return externalUser;
+    return await this.externalUserRepository.save(user);
   }
 
   async saveUserFromOauth(user: any) {
-    const userData: ExternalUser = this.externalUserRepository.create({
-      ...ExternalUser,
-      ...user,
-    });
-    userData.userName = user.userName;
-    userData.firstName = user.firstName;
-    userData.lastName = user.lastName;
-    userData.sub = user.sub;
-    userData.provider = user.provider;
-    userData.email = user.email;
-    userData.profilePic = user.picture;
-    userData.accessToken = user.accessToken;
-    userData.refreshToken = user.refreshToken;
-    await this.externalUserRepository.persistAndFlush(userData);
-    return userData;
+    await this.externalUserRepository.save(user);
+    return user;
   }
 
   async update(user: externalUserDto | any, where = {}) {
-    const existingUser = await this.findOneByField({ where });
+    const existingUser = await this.externalUserRepository.findOneByField({
+      where,
+    });
     if (!existingUser)
       throw new RuntimeException(400, ErrorMessage.NOT_FOUND, 'user');
-    const updatedUser: ExternalUser = this.externalUserRepository.assign(
-      existingUser,
-      user,
-    );
-    await this.externalUserRepository.persistAndFlush(updatedUser);
+    const updatedUser: ExternalUser = { ...existingUser, ...user };
+    await this.externalUserRepository.save(updatedUser);
     return updatedUser;
+  }
+
+  async findOneByField(options: FindOneOptions) {
+    return await this.externalUserRepository.findOneByField(options);
   }
 }

@@ -2,45 +2,34 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-25 23:34:43
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-30 23:09:03
+ * @Last Modified time: 2023-05-12 11:18:05
  */
 
 import CommonEntity from '@core/Common/entities/common.entity';
-import {
-  Entity,
-  EntityRepositoryType,
-  PrimaryKey,
-  Property,
-} from '@mikro-orm/core';
-import { v4 } from 'uuid';
-import UserRepository from './users.repository';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ tableName: 'users', customRepository: () => UserRepository })
+@Entity({ name: 'users' })
 export default class User extends CommonEntity {
-  @PrimaryKey({
+  @PrimaryGeneratedColumn('uuid', {
     name: 'user_id',
-    type: 'uuid',
   })
-  userId: string = v4();
+  userId: string;
 
-  @Property({ name: 'full_name' })
+  @Column({ name: 'full_name' })
   fullName: string;
 
-  @Property({ name: 'contact' })
+  @Column({ name: 'contact' })
   contact: string;
 
-  @Property({ name: 'profile_pic', nullable: true })
+  @Column({ name: 'profile_pic', nullable: true })
   profilePic: string;
 
-  @Property({ name: 'user_name' })
+  @Column({ name: 'user_name' })
   userName: string;
 
-  @Property({ name: 'email', nullable: true })
+  @Column({ name: 'email', nullable: true })
   email: string;
 
-  @Property({ name: 'password', nullable: true })
+  @Column({ name: 'password', nullable: true })
   password: string;
-
-  // to allow inference in `em.getRepository()`
-  [EntityRepositoryType]?: UserRepository;
 }

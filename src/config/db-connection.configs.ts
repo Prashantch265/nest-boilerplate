@@ -1,11 +1,10 @@
 /*
  * @Author: prashant.chaudhary
- * @Date: 2022-10-20 11:50:16
+ * @Date: 2022-12-08 10:24:32
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-28 19:54:12
+ * @Last Modified time: 2023-04-29 22:08:27
  */
 
-import { MikroEntitySubscriber } from '@database/subscribers/mikro-entity.subscriber';
 import { Utils } from '@mikro-orm/core';
 import { TSMigrationGenerator } from '@mikro-orm/migrations';
 import { MikroOrmModuleSyncOptions } from '@mikro-orm/nestjs';
@@ -14,7 +13,8 @@ import { MongooseModuleFactoryOptions } from '@nestjs/mongoose';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { Logger } from 'mongodb';
 import readConfigurations from './read-configs';
-import { loggerService } from '@utils/logger';
+import { SqlHighlighter } from '@mikro-orm/sql-highlighter';
+import { MikroEntitySubscriber } from '@database/subscribers/mikro-entity.subscriber';
 
 const NODE_ENV = process.env.NODE_ENV;
 
@@ -81,7 +81,8 @@ const pgConnectionForMikroOrm = (): MikroOrmModuleSyncOptions => {
     password: postgresConfig.password,
     registerRequestContext: true,
     debug: process.env.NODE_ENV === 'local' || 'development' ? true : false,
-    logger: (msg) => loggerService().log(msg),
+    highlighter: new SqlHighlighter(),
+    // logger: (msg) => loggerService().log(msg),
     migrations: {
       tableName: 'migrations',
       path: Utils.detectTsNode()

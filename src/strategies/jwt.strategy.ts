@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:08:48
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2023-01-02 16:44:33
+ * @Last Modified time: 2023-05-12 15:42:44
  */
 
 import { payloadDto } from '@auth/auth.interface';
@@ -34,17 +34,15 @@ export default class JwtStrategy extends PassportStrategy(Strategy) {
     const { sub, userType } = payload;
     let existingUser;
     if (userType === 'internal')
-      existingUser = await this.userService.findOneByFeild(
-        { userId: sub },
-        { fields: ['userId'] },
-      );
+      existingUser = await this.userService.findOneByField({
+        where: { userId: sub },
+        select: ['userId'],
+      });
     else
-      existingUser = await this.externalUserService.findOneByField(
-        {
-          userId: sub,
-        },
-        { fields: ['userId'] },
-      );
+      existingUser = await this.externalUserService.findOneByField({
+        where: { userId: sub },
+        select: ['userId'],
+      });
 
     if (!existingUser) {
       done(null, existingUser);

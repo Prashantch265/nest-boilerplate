@@ -5,24 +5,22 @@
  * @Last Modified time: 2023-01-03 16:48:09
  */
 
-import { FindOptions } from '@mikro-orm/core';
-import { EntityRepository } from '@mikro-orm/postgresql';
+import { FindOneOptions, Repository } from 'typeorm';
 import Modules from './module.entity';
 
-export default class ModuleRepository extends EntityRepository<Modules> {
-  protected readonly entityManager = this.em.getConnection();
-
-  async findOneByFeild(where = {}, options: FindOptions<Modules> = {}) {
-    where = { ...where, isActive: true };
-    return await this.findOne(where, options);
+export default class ModuleRepository extends Repository<Modules> {
+  async findOneByField(options: FindOneOptions) {
+    const { where } = options;
+    options.where = { ...where, isActive: true };
+    return super.findOne(options);
   }
 
   async getModule(moduleId?: number) {
     const replacements: Array<any> = [moduleId];
 
-    const whereQuery = ` and modules.id = ?`;
+    const whereQuery = ` and modules.id = $1`;
 
-    return await this.entityManager.execute(
+    return await super.query(
       `
     select
     screens.name as "screen",

@@ -6,20 +6,21 @@
  */
 
 import PrimaryEntity from '@core/Common/entities/primary.entity';
-import { Collection, Entity, Property, OneToMany } from '@mikro-orm/core';
 import Modules from '../module/module.entity';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
-@Entity({ tableName: 'screens' })
+@Entity({ name: 'screens' })
 export default class Screen extends PrimaryEntity {
-  @Property({ name: 'name' })
+  @Column({ name: 'name' })
   name: string;
 
-  @Property({ name: 'code', unique: true })
+  @Column({ name: 'code', unique: true })
   code: string;
 
-  @Property({ name: 'description', nullable: true })
+  @Column({ name: 'description', nullable: true })
   description: string;
 
-  @OneToMany(() => Modules, (modules) => modules.screenId)
-  modules = new Collection<Modules>(this);
+  @ManyToOne(() => Modules, (module) => module.screens)
+  @JoinColumn({ name: 'module_id' })
+  module: Modules;
 }

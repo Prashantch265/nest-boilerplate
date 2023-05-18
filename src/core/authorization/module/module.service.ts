@@ -12,23 +12,19 @@ import ScreenService from '../screen/screen.service';
 import { CreateModuleDto, UpdateModuleDto } from './module.dto';
 import Modules from './module.entity';
 import ModuleRepository from './module.repository';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export default class ModulesService {
   constructor(
+    @InjectRepository(Modules)
     private readonly moduleRepository: ModuleRepository,
+
     private readonly screenService: ScreenService,
   ) {}
 
   async createModule(data: CreateModuleDto) {
-    const { id } = await this.screenService.getScreenByCode(data.screenCode);
-    const instance: Modules = this.moduleRepository.create({
-      ...Modules,
-      ...data,
-    });
-    instance.screenId = id;
-    await this.moduleRepository.persistAndFlush(instance);
-    return instance;
+    return await this.moduleRepository.save(data);
   }
 
   async getAllModules() {

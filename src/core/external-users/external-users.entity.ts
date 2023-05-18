@@ -2,67 +2,64 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-25 23:13:26
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-30 23:07:23
+ * @Last Modified time: 2023-05-12 11:13:52
  */
 
 import CommonEntity from '@core/Common/entities/common.entity';
 import { OtpType } from '@core/otp/otp.dto';
-import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { v4 } from 'uuid';
 
-@Entity({ tableName: 'external_users' })
+@Entity({ name: 'external_users' })
 export default class ExternalUser extends CommonEntity {
-  @PrimaryKey({
-    name: 'user_id',
-    type: 'uuid',
-  })
-  userId: string = v4();
+  @PrimaryGeneratedColumn('uuid', { name: 'user_id' })
+  userId: string;
 
-  @Property({ name: 'user_name' })
+  @Column({ name: 'user_name' })
   userName: string;
 
-  @Property({ name: 'first_name' })
+  @Column({ name: 'first_name' })
   firstName: string;
 
-  @Property({ name: 'last_name' })
+  @Column({ name: 'last_name' })
   lastName: string;
 
-  @Property({ name: 'profile_pic', nullable: true })
+  @Column({ name: 'profile_pic', nullable: true })
   profilePic: string;
 
-  @Property({ name: 'email', nullable: true })
+  @Column({ name: 'email', nullable: true })
   email?: string;
 
-  @Property({ name: 'contact_no', nullable: true })
+  @Column({ name: 'contact_no', nullable: true })
   contactNo?: string;
 
-  @Property({ name: 'provider', nullable: true })
+  @Column({ name: 'provider', nullable: true })
   provider?: string;
 
-  @Property({ name: 'password', nullable: true })
+  @Column({ name: 'password', nullable: true })
   password?: string;
 
-  @Property({ name: 'otp', nullable: true })
+  @Column({ name: 'otp', nullable: true })
   otp?: string;
 
-  @Property({ name: 'otp_expiration_time', type: 'timestamp', nullable: true })
+  @Column({ name: 'otp_expiration_time', type: 'timestamp', nullable: true })
   otpExpirationTime?: Date;
 
-  @Property({ name: 'email_otp_verified', type: 'boolean', default: false })
+  @Column({ name: 'email_otp_verified', type: 'boolean', default: false })
   emailOtpVerified?: boolean;
 
-  @Property({ name: 'sms_otp_verified', type: 'boolean', default: false })
+  @Column({ name: 'sms_otp_verified', type: 'boolean', default: false })
   smsOtpVerified?: boolean;
 
-  @Property({ name: 'otp_type', default: OtpType.WEB })
+  @Column({ name: 'otp_type', default: OtpType.WEB })
   otpType?: string;
 
-  @Property({ name: 'token', nullable: true })
+  @Column({ name: 'token', nullable: true })
   sub?: string;
 
-  @Property({ name: 'access_token', nullable: true })
+  @Column({ name: 'access_token', nullable: true })
   accessToken?: string;
 
-  @Property({ name: 'refresh_token', nullable: true })
+  @Column({ name: 'refresh_token', nullable: true })
   refreshToken?: string;
 }

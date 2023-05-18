@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-11-13 21:18:42
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2023-01-02 12:12:09
+ * @Last Modified time: 2023-05-12 15:43:15
  */
 
 import ExternalUserService from '@core/external-users/external-users.service';
@@ -39,14 +39,13 @@ export class AuthService {
 
   async registerExternalUser(user: RegisterUserDto) {
     const existingUser = await this.externalUserService.findOneByField({
-      email: user.email,
-      userName: user.userName,
+      where: { email: user.email, userName: user.userName },
     });
     if (existingUser)
       throw new RuntimeException(400, ErrorMessage.DUPLICATE_DATA, 'user');
 
     const existingUserName = await this.externalUserService.findOneByField({
-      userName: user.userName,
+      where: { userName: user.userName },
     });
     if (existingUserName)
       throw new RuntimeException(400, ErrorMessage.USERNAME_NOT_AVAILABLE);
@@ -63,7 +62,9 @@ export class AuthService {
   async findInternalUser(loginData: LoginDataDto) {
     const { userName, email, password } = loginData;
     const condition = userName ? { userName: userName } : { email: email };
-    const existingUser = await this.userService.findOneByFeild(condition);
+    const existingUser = await this.userService.findOneByField({
+      where: condition,
+    });
     if (!existingUser)
       throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
@@ -93,9 +94,9 @@ export class AuthService {
   async findExternalUser(loginData: LoginDataDto) {
     const { userName, email, password } = loginData;
     const condition = userName ? { userName: userName } : { email: email };
-    const existingUser = await this.externalUserService.findOneByField(
-      condition,
-    );
+    const existingUser = await this.externalUserService.findOneByField({
+      where: condition,
+    });
     if (!existingUser)
       throw new RuntimeException(400, ErrorMessage.INVALID_CREDENTIAL);
 
@@ -133,19 +134,17 @@ export class AuthService {
       let existingUser;
 
       if (userType === 'internal') {
-        existingUser = await this.userService.findOneByFeild(
-          {
+        existingUser = await this.userService.findOneByField({
+          where: {
             userId: sub,
           },
-          { fields: ['userId'] },
-        );
+          select: ['userId'],
+        });
       } else {
-        existingUser = await this.externalUserService.findOneByField(
-          {
-            userId: sub,
-          },
-          { fields: ['userId'] },
-        );
+        existingUser = await this.externalUserService.findOneByField({
+          where: { userId: sub },
+          select: ['userId'],
+        });
       }
 
       if (!existingUser)
@@ -182,7 +181,7 @@ export class AuthService {
 
   async saveUserFromGoogle(user: OauthUserDto) {
     let existingUser = await this.externalUserService.findOneByField({
-      sub: user.sub,
+      where: { sub: user.sub },
     });
 
     if (!existingUser) {
@@ -210,7 +209,7 @@ export class AuthService {
 
   async saveUserFromFacebook(user: OauthUserDto) {
     let existingUser = await this.externalUserService.findOneByField({
-      sub: user.sub,
+      where: { sub: user.sub },
     });
 
     if (!existingUser) {

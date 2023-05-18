@@ -6,41 +6,22 @@
  */
 
 import PrimaryEntity from '@core/Common/entities/primary.entity';
-import {
-  Collection,
-  Entity,
-  EntityRepositoryType,
-  ManyToOne,
-  OneToMany,
-  Property,
-} from '@mikro-orm/core';
 import ModulePrivilege from '../module-privilege/module-privilege.entity';
 import Screen from '../screen/screen.entity';
 import ModuleRepository from './module.repository';
+import { Column, Entity, OneToMany } from 'typeorm';
 
-@Entity({ tableName: 'modules', customRepository: () => ModuleRepository })
+@Entity({ name: 'modules' })
 export default class Modules extends PrimaryEntity {
-  @Property({ name: 'name' })
+  @Column({ name: 'name' })
   name: string;
 
-  @Property({ name: 'code', unique: true })
+  @Column({ name: 'code', unique: true })
   code: string;
 
-  @Property({ name: 'description', nullable: true })
+  @Column({ name: 'description', nullable: true })
   description: string;
 
-  @ManyToOne(() => Screen, {
-    onDelete: 'cascade',
-    fieldName: 'screen_id',
-    nullable: true,
-  })
-  screenId: number;
-
-  @OneToMany(
-    () => ModulePrivilege,
-    (modulePrivilege) => modulePrivilege.moduleId,
-  )
-  modulePrivilege = new Collection<ModulePrivilege>(this);
-
-  [EntityRepositoryType]?: ModuleRepository;
+  @OneToMany(() => Screen, (screen) => screen.module)
+  screens: Screen[];
 }

@@ -2,7 +2,7 @@
  * @Author: prashant.chaudhary
  * @Date: 2022-12-06 22:05:22
  * @Last Modified by: prashant.chaudhary
- * @Last Modified time: 2022-12-25 23:26:41
+ * @Last Modified time: 2023-05-12 15:04:42
  */
 
 import { ErrorMessage } from '@core/Common/interfaces/common.interface';
@@ -11,13 +11,16 @@ import { RuntimeException } from '@exceptions/runtime.exception';
 import { MailerService, ISendMailOptions } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import otpGenerator from 'otp-generator';
-import OtpConfigService from './otp-config.service';
 import { OtpType, RecievedOtpDto } from './otp.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import OTP from './otp.entity';
+import OtpConfigRepository from './otp-config.repository';
 
 @Injectable()
 export default class OtpService {
   constructor(
-    private readonly otpConfigService: OtpConfigService,
+    @InjectRepository(OTP)
+    private readonly otpConfigRepository: OtpConfigRepository,
     private readonly externalUserService: ExternalUserService,
     private readonly mailerService: MailerService,
   ) {}
@@ -34,7 +37,9 @@ export default class OtpService {
       upperCase,
       specialChar,
       expirationTime,
-    } = await this.otpConfigService.findOneByField({ type: otpType });
+    } = await this.otpConfigRepository.findOneByField({
+      where: { type: otpType },
+    });
     const otp = otpGenerator.generate(otpLength, {
       digits: digits,
       lowerCaseAlphabets: alphabets,
@@ -49,7 +54,7 @@ export default class OtpService {
   async sendOtpOnMail(type: OtpType, email: string) {
     const { otp, expirationTime } = await this.generateEmailOtp(type);
     const user = await this.externalUserService.findOneByField({
-      email: email,
+      where: { email: email },
     });
     user.otp = otp;
     user.otpExpirationTime = expirationTime;
