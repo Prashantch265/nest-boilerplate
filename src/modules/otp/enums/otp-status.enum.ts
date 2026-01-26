@@ -1,0 +1,5 @@
+export enum OTP_STATUS {
+  PENDING = 'PENDING',
+  VERIFIED = 'VERIFIED',
+  EXPIRED = 'EXPIRED',
+}

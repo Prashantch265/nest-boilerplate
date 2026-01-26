@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: koreaconnex-backend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src/configs/yaml/local.config.yaml:/app/dist/configs/yaml/config.yaml
+    networks:
+      - postgres-test
+
+networks:
+  postgres-test:
+    external: true 

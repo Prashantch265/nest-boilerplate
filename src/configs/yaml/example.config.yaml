@@ -1,0 +1,50 @@
+app:
+  name: Nest.js Backend
+  env: local
+  port: 5000
+
+log:
+  level: debug
+
+database:
+  dialect: postgres
+  host: localhost
+  port: 5432
+  username: postgres
+  password: postgres
+  name: nestjs
+
+frontend:
+  url: <YOUR_FRONTEND_URL>
+
+jwt:
+  accessTokenSecret: 'YOUR_SUPER_SECRET_ACCESS_KEY'
+  accessTokenExpiresIn: '15m'
+  refreshTokenSecret: 'YOUR_SUPER_SECRET_REFRESH_KEY'
+  refreshTokenExpiresIn: '7d'
+  passwordResetSecret: 'YOUR_SUPER_SECRET_PASSWORD_RESET_KEY'
+  passwordResetExpiresIn: '15m'
+  
+storage:
+  type: filesystem # or 's3'
+  filesystem:
+    baseDir: '' # Base directory for all uploads
+    uploadLimit: 10485760 # 10MB
+
+mailer:
+  host: smtp.gmail.com
+  port: 587
+  secure: false # true for 465, false for other ports
+  user: 'your-email@gmail.com' # Your email address
+  pass: 'your-app-password' # Your email app password
+  from: '"Nestjs" <no-reply@nestjs.com>'
+
+oauth:
+  google:
+    clientId: <client_id>
+    clientSecret: <client_secret>
+    callback: '/api/auth/google/callback'
+
+opentelemetry:
+  trace:
+    http: http://<collector_url>/v1/traces
